@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 interface AuthContextType {
   session: Session | null;
@@ -49,20 +50,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const response = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    
-    // Create profile after signup
-    if (response.data.user) {
-      await supabase.from('profiles').insert({
-        id: response.data.user.id,
-        created_at: new Date().toISOString(),
+    try {
+      const response = await supabase.auth.signUp({
+        email,
+        password,
       });
+      
+      // Create profile after signup if user was created
+      if (response.data.user && !response.error) {
+        try {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: response.data.user.id,
+              created_at: new Date().toISOString(),
+            });
+          
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+            toast.error('Account created but profile setup failed');
+          }
+        } catch (profileErr) {
+          console.error('Exception creating profile:', profileErr);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Error during signup:', error);
+      return { error: error as Error, data: null };
     }
-    
-    return response;
   };
 
   const signIn = async (email: string, password: string) => {

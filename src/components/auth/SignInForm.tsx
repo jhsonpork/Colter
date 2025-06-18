@@ -27,7 +27,11 @@ const SignInForm: React.FC<SignInFormProps> = ({
       const { error } = await signIn(email, password);
       
       if (error) {
-        toast.error(error.message);
+        if (error.message.includes('email_not_confirmed')) {
+          toast.error('Please confirm your email before signing in');
+        } else {
+          toast.error(error.message);
+        }
       } else {
         toast.success('Signed in successfully!');
         if (onSuccess) onSuccess();
