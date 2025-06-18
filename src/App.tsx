@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import AdGenerator from './components/AdGenerator';
@@ -94,6 +96,11 @@ import DistributionStack from './components/DistributionStack';
 import PricingModal from './components/PricingModal';
 import Navigation from './components/Navigation';
 import { AdResult, SavedCampaign } from './types/ad';
+import { AuthProvider } from './context/AuthContext';
+import AuthPage from './components/auth/AuthPage';
+import ResetPasswordForm from './components/auth/ResetPasswordForm';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import { supabase } from './lib/supabase';
 
 type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
@@ -123,15 +130,55 @@ function App() {
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
 
-  // Load saved campaigns from localStorage
+  // Load saved campaigns from localStorage or Supabase if logged in
   useEffect(() => {
-    const saved = localStorage.getItem('adrocket-campaigns');
-    if (saved) {
-      setSavedCampaigns(JSON.parse(saved));
-    }
+    const loadCampaigns = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        // User is logged in, load from Supabase
+        try {
+          const { data, error } = await supabase
+            .from('saved_campaigns')
+            .select('*')
+            .order('created_at', { ascending: false });
+          
+          if (error) {
+            throw error;
+          }
+          
+          if (data) {
+            const formattedCampaigns: SavedCampaign[] = data.map(item => ({
+              id: item.id,
+              name: item.name,
+              createdAt: item.created_at,
+              type: item.type,
+              ...(item.type === 'single' ? { ad: item.data as any } : { campaign: item.data as any })
+            }));
+            
+            setSavedCampaigns(formattedCampaigns);
+          }
+        } catch (error) {
+          console.error('Error loading campaigns from Supabase:', error);
+          // Fallback to localStorage
+          const saved = localStorage.getItem('adrocket-campaigns');
+          if (saved) {
+            setSavedCampaigns(JSON.parse(saved));
+          }
+        }
+      } else {
+        // User is not logged in, load from localStorage
+        const saved = localStorage.getItem('adrocket-campaigns');
+        if (saved) {
+          setSavedCampaigns(JSON.parse(saved));
+        }
+      }
+    };
+    
+    loadCampaigns();
   }, []);
 
-  const handleAdGenerated = (ad: AdResult) => {
+  const handleAdGenerated = async (ad: AdResult) => {
     setGeneratedAd(ad);
     // Disable this for now to make all features fully functional
     // setHasUsedFreeTrial(true);
@@ -147,26 +194,72 @@ function App() {
     
     const updatedCampaigns = [newCampaign, ...savedCampaigns];
     setSavedCampaigns(updatedCampaigns);
+    
+    // Save to localStorage for non-logged in users
     localStorage.setItem('adrocket-campaigns', JSON.stringify(updatedCampaigns));
+    
+    // If user is logged in, save to Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      try {
+        await supabase.from('saved_campaigns').insert({
+          user_id: session.user.id,
+          name: newCampaign.name,
+          data: ad,
+          type: 'single'
+        });
+      } catch (error) {
+        console.error('Error saving campaign to Supabase:', error);
+      }
+    }
   };
 
-  const handleCampaignGenerated = (campaign: SavedCampaign) => {
+  const handleCampaignGenerated = async (campaign: SavedCampaign) => {
     const updatedCampaigns = [campaign, ...savedCampaigns];
     setSavedCampaigns(updatedCampaigns);
+    
+    // Save to localStorage for non-logged in users
     localStorage.setItem('adrocket-campaigns', JSON.stringify(updatedCampaigns));
+    
+    // If user is logged in, save to Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      try {
+        await supabase.from('saved_campaigns').insert({
+          user_id: session.user.id,
+          name: campaign.name,
+          data: campaign.campaign,
+          type: 'campaign'
+        });
+      } catch (error) {
+        console.error('Error saving campaign to Supabase:', error);
+      }
+    }
   };
 
   const handleUpgradeClick = () => {
     setShowPricing(true);
   };
 
-  const handleDeleteCampaign = (id: string) => {
+  const handleDeleteCampaign = async (id: string) => {
     const updatedCampaigns = savedCampaigns.filter(c => c.id !== id);
     setSavedCampaigns(updatedCampaigns);
+    
+    // Update localStorage
     localStorage.setItem('adrocket-campaigns', JSON.stringify(updatedCampaigns));
+    
+    // If user is logged in, delete from Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      try {
+        await supabase.from('saved_campaigns').delete().eq('id', id);
+      } catch (error) {
+        console.error('Error deleting campaign from Supabase:', error);
+      }
+    }
   };
 
-  return (
+  const MainContent = () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -789,6 +882,27 @@ function App() {
         )}
       </div>
     </div>
+  );
+
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/reset-password" element={<ResetPasswordForm />} />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <MainContent />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+        <Toaster position="top-center" />
+      </Router>
+    </AuthProvider>
   );
 }
 
