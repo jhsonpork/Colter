@@ -1,14 +1,60 @@
-import React from 'react';
-import { X, Check, Zap, Crown, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Check, Zap, Crown, Star, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { STRIPE_PRODUCTS } from '../stripe-config';
+import toast from 'react-hot-toast';
 
 interface PricingModalProps {
   onClose: () => void;
 }
 
 const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
-  const handleStripeCheckout = () => {
-    // In a real app, this would redirect to Stripe checkout
-    alert('This would redirect to Stripe checkout for $9.99/month subscription');
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleStripeCheckout = async () => {
+    if (!user) {
+      toast.error('Please sign in to continue');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { priceId, mode } = STRIPE_PRODUCTS.proAccess;
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+        body: JSON.stringify({
+          price_id: priceId,
+          success_url: `${window.location.origin}/?success=true`,
+          cancel_url: `${window.location.origin}/?canceled=true`,
+          mode: mode,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error('Failed to start checkout process. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,7 +115,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
                 <h3 className="text-xl font-bold text-white">Pro Plan</h3>
               </div>
               <div className="text-3xl font-bold text-white mb-2">
-                $9.99
+                $25.99
                 <span className="text-lg text-gray-400">/month</span>
               </div>
               <p className="text-gray-400 mb-6">Unlimited viral ads</p>
@@ -103,11 +149,20 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
 
               <button
                 onClick={handleStripeCheckout}
+                disabled={isLoading}
                 className="w-full px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-black 
                          font-bold rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
-                         shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40"
+                         shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 disabled:opacity-70
+                         disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
-                Start Pro Plan - $9.99/mo
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <span>Start Pro Plan - $25.99/mo</span>
+                )}
               </button>
             </div>
           </div>
