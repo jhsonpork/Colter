@@ -101,7 +101,6 @@ import AuthPage from './components/auth/AuthPage';
 import ResetPasswordForm from './components/auth/ResetPasswordForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { supabase } from './lib/supabase';
-import SuccessPage from './components/SuccessPage';
 
 type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
@@ -130,14 +129,30 @@ function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
-  // Load saved campaigns from localStorage or Supabase if logged in
+  // Check subscription status and load saved campaigns
   useEffect(() => {
-    const loadCampaigns = async () => {
+    const checkSubscription = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        // User is logged in, load from Supabase
+        // Check subscription status
+        try {
+          const { data: subscriptionData, error: subscriptionError } = await supabase
+            .from('stripe_user_subscriptions')
+            .select('subscription_status')
+            .single();
+          
+          if (!subscriptionError && subscriptionData) {
+            setIsSubscribed(subscriptionData.subscription_status === 'active' || 
+                           subscriptionData.subscription_status === 'trialing');
+          }
+        } catch (error) {
+          console.error('Error checking subscription:', error);
+        }
+        
+        // Load saved campaigns
         try {
           const { data, error } = await supabase
             .from('saved_campaigns')
@@ -176,13 +191,24 @@ function App() {
       }
     };
     
-    loadCampaigns();
+    checkSubscription();
+    
+    // Check URL for success parameter (after Stripe checkout)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      toast.success('Payment successful! You now have access to all features.');
+      setIsSubscribed(true);
+      // Remove query parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   const handleAdGenerated = async (ad: AdResult) => {
     setGeneratedAd(ad);
-    // Disable this for now to make all features fully functional
-    // setHasUsedFreeTrial(true);
+    // Only set free trial as used if not subscribed
+    if (!isSubscribed) {
+      setHasUsedFreeTrial(true);
+    }
     
     // Save to campaigns
     const newCampaign: SavedCampaign = {
@@ -260,6 +286,17 @@ function App() {
     }
   };
 
+  // Check URL for success parameter on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      toast.success('Payment successful! You now have access to all features.');
+      setIsSubscribed(true);
+      // Remove query parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const MainContent = () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       {/* Animated background elements */}
@@ -283,7 +320,7 @@ function App() {
             <AdGenerator 
               onAdGenerated={handleAdGenerated}
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
               generatedAd={generatedAd}
             />
           )}
@@ -292,35 +329,35 @@ function App() {
             <CampaignGenerator 
               onCampaignGenerated={handleCampaignGenerated}
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
           
           {activePage === 'rewriter' && (
             <AdRewriter 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'email' && (
             <ColdEmailGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'social' && (
             <SocialBlitzGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'influencer' && (
             <InfluencerPitchGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -328,77 +365,77 @@ function App() {
             <CampaignExporter 
               campaigns={savedCampaigns}
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'comparator' && (
             <AdComparator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'personas' && (
             <PersonaProfiler 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'angles' && (
             <ContentAngleGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'trend-rewriter' && (
             <TrendRewriter 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'ab-variations' && (
             <ABVariationGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'tone-polisher' && (
             <TonePolisher 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'campaign-pack' && (
             <CampaignPackExporter 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'hook-analyzer' && (
             <HookAnalyzer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'headline-tester' && (
             <HeadlineSplitTester 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'audience-analyzer' && (
             <AudienceResonanceAnalyzer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -406,84 +443,84 @@ function App() {
           {activePage === 'pain-extractor' && (
             <PainPointExtractor 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'offer-optimizer' && (
             <OfferOptimizer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'script-skit' && (
             <ScriptToSkitConverter 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'storyboard' && (
             <StoryboardBuilder 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'emotion-mapper' && (
             <EmotionalTriggerMapper 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'controversial' && (
             <ControversialTakeGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'flip-script' && (
             <FlipScriptReverser 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'persona-cta' && (
             <PersonaCTAGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'before-after' && (
             <BeforeAfterAdGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'metaphor' && (
             <MetaphorMagicTool 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'comment-bait' && (
             <CommentBaitGenerator 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'ad-blocks' && (
             <AdBuildingBlockAssembler 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -491,84 +528,84 @@ function App() {
           {activePage === 'ad-explainer' && (
             <AdVersionExplainer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'modular-assembler' && (
             <ModularAdAssembler 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'goal-matcher' && (
             <AdGoalMatcher 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'deviralizer' && (
             <Deviralizer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'first-3-seconds' && (
             <FirstThreeSecondsOptimizer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'cta-personalizer' && (
             <CTAPersonalizer 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'psych-test' && (
             <PsychTestForCopy 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'visual-builder' && (
             <VisualAdBuilder 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'style-roulette' && (
             <AdStyleRoulette 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'magnet-breakdown' && (
             <AdMagnetBreakdown 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'performance-predictor' && (
             <ViralPerformancePredictor 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'memory-test' && (
             <HookMemoryTest 
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -576,84 +613,84 @@ function App() {
           {activePage === 'offer-angle-matcher' && (
             <OfferAngleMatcher
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'hook-frame-tester' && (
             <HookFrameTester
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'creator-funnel-builder' && (
             <CreatorFunnelBuilder
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'course-summary-generator' && (
             <CourseSummaryGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'comment-exploder' && (
             <CommentExploder
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'viral-cta-sequencer' && (
             <ViralCTASequencer
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'platform-timing-forecaster' && (
             <PlatformTimingForecaster
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'content-ethics-sanitizer' && (
             <ContentEthicsSanitizer
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'value-ladder-builder' && (
             <ValueLadderBuilder
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'monetization-generator' && (
             <MonetizationGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'content-framework-builder' && (
             <ContentFrameworkBuilder
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'course-curriculum-builder' && (
             <CourseCurriculumBuilder
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -661,70 +698,70 @@ function App() {
           {activePage === 'startup-engine' && (
             <ZeroToStartupEngine
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'content-calendar' && (
             <ContentCalendarGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'prompt-debugger' && (
             <PromptDebugger
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'agency-automator' && (
             <OnePersonAgencyAutomator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'product-launch' && (
             <ProductLaunchFlow
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'failure-analyzer' && (
             <FailureAnalyzer
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'income-streams' && (
             <IncomeStreamGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'infographic-wizard' && (
             <InfographicWizard
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'digital-product' && (
             <DigitalProductGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'collab-connector' && (
             <CreatorCollabConnector
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -732,70 +769,70 @@ function App() {
           {activePage === 'contract-negotiator' && (
             <ContractClauseNegotiator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'regulation-scanner' && (
             <RegulationGapScanner
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'monetization-multiplier' && (
             <MonetizationMultiplier
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'crisis-comms' && (
             <CrisisCommsGenerator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'acquisition-translator' && (
             <AcquisitionLanguageTranslator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'churn-autopsy' && (
             <ChurnAutopsyReport
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'global-payroll' && (
             <GlobalPayrollArchitect
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'ip-strategy' && (
             <IPStrategySimulator
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'board-meeting' && (
             <BoardMeetingAlchemist
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'exit-multiplier' && (
             <ExitMultiplierEngine
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
@@ -803,70 +840,70 @@ function App() {
           {activePage === 'idea-to-company' && (
             <IdeaToCompany
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'auto-ghostwriter' && (
             <AutoGhostwriter
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'decision-clarity' && (
             <DecisionClarity
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'breakpoint-fixer' && (
             <BreakpointFixer
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'hyperpersona' && (
             <HyperPersona
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'perfect-pricing' && (
             <PerfectPricing
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'audience-trigger' && (
             <AudienceTrigger
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'startup-strategy' && (
             <StartupStrategy
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'mini-saas' && (
             <MiniSaaS
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
 
           {activePage === 'distribution-stack' && (
             <DistributionStack
               onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
+              hasUsedFreeTrial={hasUsedFreeTrial && !isSubscribed}
             />
           )}
           
@@ -891,7 +928,6 @@ function App() {
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<ResetPasswordForm />} />
-          <Route path="/success" element={<SuccessPage />} />
           <Route 
             path="/" 
             element={
