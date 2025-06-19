@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Check, Zap, Crown, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { STRIPE_PRODUCTS } from '../stripe-config';
+import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 interface PricingModalProps {

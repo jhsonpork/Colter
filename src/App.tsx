@@ -101,6 +101,7 @@ import AuthPage from './components/auth/AuthPage';
 import ResetPasswordForm from './components/auth/ResetPasswordForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { supabase } from './lib/supabase';
+import SuccessPage from './components/SuccessPage';
 
 type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
@@ -890,6 +891,7 @@ function App() {
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<ResetPasswordForm />} />
+          <Route path="/success" element={<SuccessPage />} />
           <Route 
             path="/" 
             element={
