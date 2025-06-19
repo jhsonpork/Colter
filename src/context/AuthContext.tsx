@@ -59,27 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
       
-      // Create profile after signup if user was created
-      if (response.data.user && !response.error) {
-        try {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: response.data.user.id,
-              created_at: new Date().toISOString(),
-            });
-          
-          if (profileError) {
-            console.error('Error creating profile:', profileError);
-            toast.error('Account created but profile setup failed');
-            return { error: new Error(profileError.message), data: response.data };
-          }
-        } catch (profileErr) {
-          console.error('Exception creating profile:', profileErr);
-          toast.error('Account created but profile setup failed');
-          return { error: profileErr as Error, data: response.data };
-        }
-      }
+      // The profile creation is now handled by the database trigger
+      // We don't need to manually create a profile here anymore
       
       return response;
     } catch (error) {
