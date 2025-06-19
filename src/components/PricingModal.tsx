@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Check, Zap, Crown, Star } from 'lucide-react';
 import { stripeProducts, successUrl, cancelUrl } from '../stripe-config';
 import { useAuth } from '../context/AuthContext';
