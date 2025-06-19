@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { X, Check, Zap, Crown, Star } from 'lucide-react';
-import { stripeProducts, successUrl, cancelUrl } from '../stripe-config';
+import { X, Check, Zap, Crown, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { STRIPE_PRODUCTS } from '../stripe-config';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
@@ -15,29 +15,26 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
 
   const handleStripeCheckout = async () => {
     if (!user) {
-      toast.error('Please sign in to upgrade');
+      toast.error('Please sign in to continue');
       return;
     }
 
     setIsLoading(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        throw new Error('No active session');
-      }
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout`, {
+    try {
+      const { priceId, mode } = STRIPE_PRODUCTS.proAccess;
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
         body: JSON.stringify({
-          priceId: stripeProducts.proSubscription.priceId,
-          mode: stripeProducts.proSubscription.mode,
-          successUrl,
-          cancelUrl
+          price_id: priceId,
+          success_url: `${window.location.origin}/?success=true`,
+          cancel_url: `${window.location.origin}/?canceled=true`,
+          mode: mode,
         }),
       });
 
@@ -48,11 +45,14 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
 
       const { url } = await response.json();
       
-      // Redirect to Stripe Checkout
-      window.location.href = url;
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error(error.message || 'Failed to start checkout process');
+      toast.error('Failed to start checkout process. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -153,9 +153,17 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
                 disabled={isLoading}
                 className="w-full px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-black 
                          font-bold rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
-                         shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 disabled:opacity-70 disabled:cursor-not-allowed"
+                         shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 disabled:opacity-70
+                         disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
-                {isLoading ? 'Processing...' : 'Start Pro Plan - $25.99/mo'}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <span>Start Pro Plan - $25.99/mo</span>
+                )}
               </button>
             </div>
           </div>

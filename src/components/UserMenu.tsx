@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, LogOut, Settings, ChevronDown, Crown } from 'lucide-react';
+import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Database } from '../types/supabase';
 import toast from 'react-hot-toast';
@@ -16,13 +16,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
   const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
       getProfile();
-      checkSubscription();
     }
   }, [user]);
 
@@ -48,30 +46,36 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
         .single();
       
       if (error) {
-        throw error;
-      }
-      
-      if (data) {
+        // If profile doesn't exist, create it
+        if (error.code === 'PGRST116') {
+          try {
+            const { data: newProfile, error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: user?.id,
+                created_at: new Date().toISOString(),
+              })
+              .select('*')
+              .single();
+            
+            if (insertError) {
+              throw insertError;
+            }
+            
+            if (newProfile) {
+              setProfile(newProfile);
+            }
+          } catch (createError) {
+            console.error('Error creating profile:', createError);
+          }
+        } else {
+          throw error;
+        }
+      } else if (data) {
         setProfile(data);
       }
     } catch (error) {
       console.error('Error loading profile:', error);
-    }
-  };
-
-  const checkSubscription = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('stripe_user_subscriptions')
-        .select('subscription_status')
-        .single();
-      
-      if (!error && data) {
-        setIsSubscribed(data.subscription_status === 'active' || 
-                       data.subscription_status === 'trialing');
-      }
-    } catch (error) {
-      console.error('Error checking subscription:', error);
     }
   };
 
@@ -107,9 +111,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
         <span className="text-white text-sm hidden md:block">
           {profile?.full_name || user.email?.split('@')[0] || 'User'}
         </span>
-        {isSubscribed && (
-          <Crown className="w-4 h-4 text-yellow-400" />
-        )}
         <ChevronDown className="w-4 h-4 text-gray-400" />
       </button>
 
@@ -118,12 +119,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
           <div className="p-3 border-b border-gray-700">
             <p className="text-white font-medium truncate">{profile?.full_name || 'User'}</p>
             <p className="text-gray-400 text-sm truncate">{user.email}</p>
-            {isSubscribed && (
-              <div className="flex items-center space-x-1 mt-1 text-xs text-yellow-400">
-                <Crown className="w-3 h-3" />
-                <span>Pro Subscriber</span>
-              </div>
-            )}
           </div>
           <div className="p-2">
             <button
@@ -136,18 +131,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
               <Settings className="w-4 h-4" />
               <span>Profile Settings</span>
             </button>
-            {!isSubscribed && (
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  onUpgradeClick();
-                }}
-                className="w-full text-left px-3 py-2 text-yellow-400 hover:bg-gray-700 rounded flex items-center space-x-2"
-              >
-                <Crown className="w-4 h-4" />
-                <span>Upgrade to Pro</span>
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                onUpgradeClick();
+              }}
+              className="w-full text-left px-3 py-2 text-yellow-400 hover:bg-gray-700 rounded flex items-center space-x-2"
+            >
+              <User className="w-4 h-4" />
+              <span>Upgrade to Pro</span>
+            </button>
             <button
               onClick={() => {
                 setIsOpen(false);
