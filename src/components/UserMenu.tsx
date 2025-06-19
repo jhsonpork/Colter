@@ -46,10 +46,32 @@ const UserMenu: React.FC<UserMenuProps> = ({ onProfileClick, onUpgradeClick }) =
         .single();
       
       if (error) {
-        throw error;
-      }
-      
-      if (data) {
+        // If profile doesn't exist, create it
+        if (error.code === 'PGRST116') {
+          try {
+            const { data: newProfile, error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: user?.id,
+                created_at: new Date().toISOString(),
+              })
+              .select('*')
+              .single();
+            
+            if (insertError) {
+              throw insertError;
+            }
+            
+            if (newProfile) {
+              setProfile(newProfile);
+            }
+          } catch (createError) {
+            console.error('Error creating profile:', createError);
+          }
+        } else {
+          throw error;
+        }
+      } else if (data) {
         setProfile(data);
       }
     } catch (error) {
