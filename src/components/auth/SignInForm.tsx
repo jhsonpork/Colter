@@ -29,6 +29,8 @@ const SignInForm: React.FC<SignInFormProps> = ({
       if (error) {
         if (error.message.includes('email_not_confirmed')) {
           toast.error('Please confirm your email before signing in');
+        } else if (error.message.includes('Invalid login credentials')) {
+          toast.error('Invalid email or password');
         } else {
           toast.error(error.message);
         }

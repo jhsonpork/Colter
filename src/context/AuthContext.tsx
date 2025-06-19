@@ -54,6 +54,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`
+        }
       });
       
       // Create profile after signup if user was created
@@ -69,9 +72,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (profileError) {
             console.error('Error creating profile:', profileError);
             toast.error('Account created but profile setup failed');
+            return { error: new Error(profileError.message), data: response.data };
           }
         } catch (profileErr) {
           console.error('Exception creating profile:', profileErr);
+          toast.error('Account created but profile setup failed');
+          return { error: profileErr as Error, data: response.data };
         }
       }
       
