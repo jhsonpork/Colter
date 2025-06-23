@@ -25,6 +25,8 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
+  const [localAd, setLocalAd] = useState<AdResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
@@ -36,12 +38,23 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     }
 
     setIsGenerating(true);
+    setError(null);
+    
     try {
       const result = await generateAd(input, selectedTone, inputMode);
-      onAdGenerated(result);
+      
+      if (!result || !result.headline || !result.adCopy) {
+        throw new Error("Failed to generate ad. Please try again.");
+      }
+      
+      setLocalAd(result);
       setShowResults(true);
+      onAdGenerated(result);
     } catch (error) {
       console.error('Error generating ad:', error);
+      setError("Failed to generate ad. Please try again later.");
+      setLocalAd(null);
+      setShowResults(false);
     } finally {
       setIsGenerating(false);
     }
@@ -52,16 +65,23 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   };
 
   const handleDownload = () => {
-    if (generatedAd) {
+    if (localAd) {
+      downloadAdPackage(localAd);
+    } else if (generatedAd) {
       downloadAdPackage(generatedAd);
     }
   };
 
   const handleNewAd = () => {
     setShowResults(false);
+    setLocalAd(null);
     setBusinessDescription('');
     setBusinessInfo('');
+    setError(null);
   };
+
+  // Use the local ad state if available, otherwise fall back to the prop
+  const adToDisplay = localAd || generatedAd;
 
   return (
     <section className="px-6 py-12">
@@ -126,6 +146,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                 />
               )}
               
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+              
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || (!businessDescription.trim() && !businessInfo.trim())}
@@ -159,7 +185,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
               )}
             </div>
           </div>
-        ) : generatedAd && (
+        ) : adToDisplay && (
           <div className="space-y-8 animate-fade-in">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-white mb-4">
@@ -202,13 +228,13 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-yellow-400 font-bold text-lg">Viral Headline</h3>
                     <button
-                      onClick={() => handleCopy(generatedAd.headline)}
+                      onClick={() => handleCopy(adToDisplay.headline)}
                       className="p-2 text-gray-400 hover:text-white transition-colors"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-white text-xl font-semibold">{generatedAd.headline}</p>
+                  <p className="text-white text-xl font-semibold">{adToDisplay.headline}</p>
                 </div>
 
                 {/* Ad Copy */}
@@ -216,13 +242,13 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-yellow-400 font-bold text-lg">Ad Copy</h3>
                     <button
-                      onClick={() => handleCopy(generatedAd.adCopy)}
+                      onClick={() => handleCopy(adToDisplay.adCopy)}
                       className="p-2 text-gray-400 hover:text-white transition-colors"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{generatedAd.adCopy}</p>
+                  <p className="text-gray-300 leading-relaxed">{adToDisplay.adCopy}</p>
                 </div>
 
                 {/* TikTok Script */}
@@ -230,20 +256,20 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-yellow-400 font-bold text-lg">TikTok Script</h3>
                     <button
-                      onClick={() => handleCopy(generatedAd.tiktokScript)}
+                      onClick={() => handleCopy(adToDisplay.tiktokScript)}
                       className="p-2 text-gray-400 hover:text-white transition-colors"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">{generatedAd.tiktokScript}</p>
+                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">{adToDisplay.tiktokScript}</p>
                 </div>
 
                 {/* Captions */}
                 <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
                   <h3 className="text-yellow-400 font-bold text-lg mb-4">Caption Variations</h3>
                   <div className="space-y-4">
-                    {generatedAd.captions.map((caption, index) => (
+                    {adToDisplay.captions.map((caption, index) => (
                       <div key={index} className="flex justify-between items-start">
                         <div className="flex-1">
                           <span className="text-yellow-400 font-semibold">#{index + 1}</span>
@@ -263,7 +289,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
 
               {/* Ad Preview */}
               <div>
-                <AdPreview ad={generatedAd} />
+                <AdPreview ad={adToDisplay} />
               </div>
             </div>
           </div>
