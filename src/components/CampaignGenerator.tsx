@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
-import { AdResult, CampaignDay, SavedCampaign } from '../types/ad';
 import { generateCampaign } from '../services/gemini';
+import { SavedCampaign, CampaignDay } from '../types/ad';
 import ToneSelector from './ToneSelector';
 import { downloadCampaignPackage } from '../utils/download';
 

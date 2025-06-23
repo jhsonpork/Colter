@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Loader2, Lock, Download, Copy, Upload, Palette } from 'lucide-react';
 import { AdResult } from '../types/ad';
 import { generateAd } from '../services/gemini';
@@ -43,7 +43,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     try {
       const result = await generateAd(input, selectedTone, inputMode);
       
-      if (!result || !result.headline || !result.adCopy) {
+      if (!result || !result.headline || !result.adCopy || !result.tiktokScript || !Array.isArray(result.captions)) {
         throw new Error("Failed to generate ad. Please try again.");
       }
       

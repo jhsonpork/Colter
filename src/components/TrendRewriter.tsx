@@ -13,6 +13,7 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
   const [userNiche, setUserNiche] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [rewrite, setRewrite] = useState<TrendRewrite | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!trendTopic.trim() || !userNiche.trim()) return;
@@ -23,11 +24,20 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
     }
 
     setIsGenerating(true);
+    setError(null);
+    
     try {
       const result = await rewriteTrend(trendTopic, userNiche);
+      
+      if (!result || !result.tweetVersion || !result.scriptVersion || !result.adVersion) {
+        throw new Error("Failed to rewrite trend. Please try again.");
+      }
+      
       setRewrite(result);
     } catch (error) {
       console.error('Error rewriting trend:', error);
+      setError("Failed to rewrite trend. Please try again later.");
+      setRewrite(null);
     } finally {
       setIsGenerating(false);
     }
@@ -102,6 +112,12 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                   />
                 </div>
               </div>
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
               
               <button
                 onClick={handleGenerate}

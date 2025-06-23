@@ -12,6 +12,7 @@ const AdStyleRoulette: React.FC<AdStyleRouletteProps> = ({ onUpgradeClick, hasUs
   const [businessType, setBusinessType] = useState('');
   const [isSpinning, setIsSpinning] = useState(false);
   const [rouletteResult, setRouletteResult] = useState<AdStyleRouletteType | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const businessTypes = [
     'SaaS/Software',
@@ -35,11 +36,20 @@ const AdStyleRoulette: React.FC<AdStyleRouletteProps> = ({ onUpgradeClick, hasUs
     }
 
     setIsSpinning(true);
+    setError(null);
+    
     try {
       const result = await spinAdStyleRoulette(businessType);
+      
+      if (!result || !result.randomStyles || !Array.isArray(result.randomStyles) || result.randomStyles.length === 0) {
+        throw new Error("Failed to generate ad styles. Please try again.");
+      }
+      
       setRouletteResult(result);
     } catch (error) {
       console.error('Error spinning ad style roulette:', error);
+      setError("Failed to generate ad styles. Please try again later.");
+      setRouletteResult(null);
     } finally {
       setIsSpinning(false);
     }
@@ -104,6 +114,12 @@ const AdStyleRoulette: React.FC<AdStyleRouletteProps> = ({ onUpgradeClick, hasUs
                   ))}
                 </select>
               </div>
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
               
               <button
                 onClick={handleSpin}
