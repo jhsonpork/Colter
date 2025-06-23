@@ -5,6 +5,7 @@ import { generateAd } from '../services/gemini';
 import AdPreview from './AdPreview';
 import ToneSelector from './ToneSelector';
 import { downloadAdPackage } from '../utils/download';
+import toast from 'react-hot-toast';
 
 interface AdGeneratorProps {
   onAdGenerated: (ad: AdResult) => void;
@@ -25,6 +26,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
@@ -36,12 +38,23 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     }
 
     setIsGenerating(true);
+    setError(null);
+    
     try {
       const result = await generateAd(input, selectedTone, inputMode);
+      
+      if (!result) {
+        setError("Failed to generate ad. Please try again later.");
+        toast.error("Failed to generate ad. Please try again.");
+        return;
+      }
+      
       onAdGenerated(result);
       setShowResults(true);
     } catch (error) {
       console.error('Error generating ad:', error);
+      setError("An error occurred while generating your ad. Please try again.");
+      toast.error("Generation failed. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -49,11 +62,13 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard!");
   };
 
   const handleDownload = () => {
     if (generatedAd) {
       downloadAdPackage(generatedAd);
+      toast.success("Download started!");
     }
   };
 
@@ -61,6 +76,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     setShowResults(false);
     setBusinessDescription('');
     setBusinessInfo('');
+    setError(null);
   };
 
   return (
@@ -124,6 +140,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   className="w-full h-40 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                            placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
                 />
+              )}
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
               )}
               
               <button
