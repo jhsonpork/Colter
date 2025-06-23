@@ -1,5 +1,6 @@
 import { AdResult, CampaignDay } from '../types/ad';
 
+// Use all 4 API keys in rotation for better reliability
 const GEMINI_API_KEYS = [
   'AIzaSyAOwKPRNd4cGzvipo8Q6ylInU6S8RcPIGo',
   'AIzaSyAD5lYQfcAiBXcp7TydtlokjJAA13_U_7g',
@@ -171,12 +172,14 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.warn(`API key ${apiKey.slice(0, 10)}... failed with status ${response.status}: ${errorText}`);
         throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+        console.warn(`API key ${apiKey.slice(0, 10)}... returned invalid response structure`);
         throw new Error('Invalid response structure from Gemini API');
       }
 
@@ -194,17 +197,20 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
+        console.warn(`API key ${apiKey.slice(0, 10)}... returned no JSON in response`);
         throw new Error('No JSON found in response');
       }
 
       try {
         const result = JSON.parse(jsonMatch[0]);
+        console.log(`Successfully used API key ${apiKey.slice(0, 10)}...`);
         return result;
       } catch (parseError) {
         // If JSON parsing fails but it's a rewrite request, return the text
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
+        console.warn(`API key ${apiKey.slice(0, 10)}... returned invalid JSON: ${parseError}`);
         throw new Error('Failed to parse JSON response');
       }
       
@@ -213,6 +219,8 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
       console.warn(`Attempt ${attempt + 1} failed with API key ${apiKey.slice(0, 10)}...`, error);
       
       if (attempt < maxRetries - 1) {
+        // Wait a short time before trying the next key
+        await new Promise(resolve => setTimeout(resolve, 100));
         continue;
       }
     }

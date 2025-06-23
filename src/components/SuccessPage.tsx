@@ -1,18 +1,39 @@
 import React, { useEffect } from 'react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const SuccessPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
 
   useEffect(() => {
+    // Check if user is authenticated
+    if (!user) {
+      toast.error('Please sign in to continue');
+      navigate('/auth');
+      return;
+    }
+
+    // Check for success or canceled params from Stripe redirect
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+
+    if (success === 'true') {
+      toast.success('Payment successful! Welcome to Pro Plan!');
+    } else if (canceled === 'true') {
+      toast.error('Payment canceled. You can try again anytime.');
+    }
+
     // Redirect to home after 5 seconds
     const timer = setTimeout(() => {
       navigate('/');
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, searchParams, user]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 via-black to-gray-900">

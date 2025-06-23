@@ -34,19 +34,28 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
 
         if (error) {
           console.error('Error fetching subscription:', error);
-          toast.error('Failed to load subscription status');
+          // Don't show error toast for subscription fetch errors to avoid confusion
         } else {
           setSubscription(data);
         }
       } catch (error) {
         console.error('Error in subscription fetch:', error);
-        toast.error('Failed to load subscription status');
+        // Don't show error toast for subscription fetch errors to avoid confusion
       } finally {
         setLoading(false);
       }
     };
 
     fetchSubscription();
+    
+    // Set up a subscription refresh interval
+    const interval = setInterval(() => {
+      if (user) {
+        fetchSubscription();
+      }
+    }, 60000); // Check every minute
+    
+    return () => clearInterval(interval);
   }, [user]);
 
   if (loading) {
