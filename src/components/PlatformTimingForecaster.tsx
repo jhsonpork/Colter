@@ -14,7 +14,6 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
   const [niche, setNiche] = useState('');
   const [isForecasting, setIsForecasting] = useState(false);
   const [forecast, setForecast] = useState<PlatformTimingForecasterType | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const contentTypes = [
     'Educational', 'Entertainment', 'Inspirational', 'Tutorial',
@@ -41,20 +40,11 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
     }
 
     setIsForecasting(true);
-    setError(null);
-    
     try {
       const result = await forecastTiming(contentType, timezone, niche);
-      
-      if (!result || !result.predictions) {
-        throw new Error("Failed to generate timing forecast. Please try again.");
-      }
-      
       setForecast(result);
     } catch (error) {
       console.error('Error forecasting timing:', error);
-      setError("Failed to generate timing forecast. Please try again later.");
-      setForecast(null);
     } finally {
       setIsForecasting(false);
     }
@@ -125,12 +115,6 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
                   </select>
                 </div>
               </div>
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
               
               <button
                 onClick={handleForecast}

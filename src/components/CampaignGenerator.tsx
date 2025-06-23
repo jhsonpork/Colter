@@ -20,7 +20,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCampaign, setGeneratedCampaign] = useState<CampaignDay[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
@@ -31,15 +30,8 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     }
 
     setIsGenerating(true);
-    setError(null);
-    
     try {
       const campaign = await generateCampaign(businessDescription, selectedTone);
-      
-      if (!campaign || !Array.isArray(campaign) || campaign.length === 0) {
-        throw new Error("Failed to generate campaign. Please try again.");
-      }
-      
       setGeneratedCampaign(campaign);
       
       const savedCampaign: SavedCampaign = {
@@ -53,8 +45,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
-      setError("Failed to generate campaign. Please try again later.");
-      setGeneratedCampaign(null);
     } finally {
       setIsGenerating(false);
     }
@@ -95,12 +85,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                 className="w-full h-32 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                          placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
               />
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
               
               <button
                 onClick={handleGenerate}
