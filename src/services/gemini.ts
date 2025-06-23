@@ -9,12 +9,32 @@ const GEMINI_API_KEYS = [
 ];
 
 let currentKeyIndex = 0;
+let failedKeys: string[] = [];
 
 const getNextApiKey = () => {
-  const key = GEMINI_API_KEYS[currentKeyIndex];
-  currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
-  return key;
+  // Skip keys that have recently failed
+  let attempts = 0;
+  while (attempts < GEMINI_API_KEYS.length) {
+    const key = GEMINI_API_KEYS[currentKeyIndex];
+    currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+    
+    if (!failedKeys.includes(key)) {
+      return key;
+    }
+    
+    attempts++;
+  }
+  
+  // If all keys have failed, reset the failed keys list and try again
+  failedKeys = [];
+  return GEMINI_API_KEYS[currentKeyIndex];
 };
+
+// Reset failed keys after 5 minutes
+setInterval(() => {
+  failedKeys = [];
+  console.log('Reset failed API keys list');
+}, 5 * 60 * 1000);
 
 const getTonePrompt = (tone: string) => {
   const tonePrompts = {
@@ -136,13 +156,17 @@ Return only the rewritten ad copy, no explanations or formatting.
 };
 
 export const callGeminiAPI = async (prompt: string): Promise<any> => {
-  const maxRetries = GEMINI_API_KEYS.length;
+  const maxRetries = GEMINI_API_KEYS.length * 2; // Allow multiple attempts per key
   let lastError: Error | null = null;
+  let attemptCount = 0;
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
+  while (attemptCount < maxRetries) {
     const apiKey = getNextApiKey();
+    attemptCount++;
     
     try {
+      console.log(`Attempt ${attemptCount}/${maxRetries} with API key ${apiKey.slice(0, 5)}...`);
+      
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
@@ -172,14 +196,20 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.warn(`API key ${apiKey.slice(0, 10)}... failed with status ${response.status}: ${errorText}`);
+        console.warn(`API key ${apiKey.slice(0, 5)}... failed with status ${response.status}: ${errorText}`);
+        
+        // Add this key to failed keys list
+        if (!failedKeys.includes(apiKey)) {
+          failedKeys.push(apiKey);
+        }
+        
         throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-        console.warn(`API key ${apiKey.slice(0, 10)}... returned invalid response structure`);
+        console.warn(`API key ${apiKey.slice(0, 5)}... returned invalid response structure`);
         throw new Error('Invalid response structure from Gemini API');
       }
 
@@ -197,34 +227,37 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
-        console.warn(`API key ${apiKey.slice(0, 10)}... returned no JSON in response`);
+        console.warn(`API key ${apiKey.slice(0, 5)}... returned no JSON in response`);
         throw new Error('No JSON found in response');
       }
 
       try {
         const result = JSON.parse(jsonMatch[0]);
-        console.log(`Successfully used API key ${apiKey.slice(0, 10)}...`);
+        console.log(`Successfully used API key ${apiKey.slice(0, 5)}...`);
+        
+        // Remove this key from failed keys if it was there
+        failedKeys = failedKeys.filter(k => k !== apiKey);
+        
         return result;
       } catch (parseError) {
         // If JSON parsing fails but it's a rewrite request, return the text
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
-        console.warn(`API key ${apiKey.slice(0, 10)}... returned invalid JSON: ${parseError}`);
+        console.warn(`API key ${apiKey.slice(0, 5)}... returned invalid JSON: ${parseError}`);
         throw new Error('Failed to parse JSON response');
       }
       
     } catch (error) {
       lastError = error as Error;
-      console.warn(`Attempt ${attempt + 1} failed with API key ${apiKey.slice(0, 10)}...`, error);
+      console.warn(`Attempt ${attemptCount} failed with API key ${apiKey.slice(0, 5)}...`, error);
       
-      if (attempt < maxRetries - 1) {
-        // Wait a short time before trying the next key
-        await new Promise(resolve => setTimeout(resolve, 100));
-        continue;
-      }
+      // Add a small delay before retrying
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 
-  throw new Error(`All API keys failed. Last error: ${lastError?.message}`);
+  // If we've exhausted all retries, throw the last error
+  console.error(`All ${maxRetries} API attempts failed. Last error:`, lastError);
+  throw new Error(`All API attempts failed. Last error: ${lastError?.message || 'Unknown error'}`);
 };

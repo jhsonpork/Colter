@@ -17,6 +17,7 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
   const { user } = useAuth();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -27,6 +28,9 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
 
       try {
         setLoading(true);
+        setError(null);
+        
+        console.log('Fetching subscription for user:', user.id);
         
         const { data, error } = await supabase
           .from('stripe_user_subscriptions')
@@ -35,13 +39,14 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
         
         if (error) {
           console.error('Error fetching subscription:', error);
-          // Don't show error toast for subscription fetch errors to avoid confusion
+          setError(error.message);
         } else {
+          console.log('Subscription data:', data);
           setSubscription(data);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error in subscription fetch:', error);
-        // Don't show error toast for subscription fetch errors to avoid confusion
+        setError(error.message || 'Unknown error fetching subscription');
       } finally {
         setLoading(false);
       }
@@ -64,6 +69,14 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
       <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50">
         <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
         <span className="text-gray-400 text-sm">Loading...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50">
+        <span className="text-gray-400 text-sm">Error loading subscription</span>
       </div>
     );
   }

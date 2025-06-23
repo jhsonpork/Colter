@@ -12,6 +12,7 @@ interface PricingModalProps {
 const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleStripeCheckout = async () => {
     if (!user) {
@@ -20,9 +21,12 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
     }
 
     setIsLoading(true);
+    setError(null);
 
     try {
       const { priceId, mode } = STRIPE_PRODUCTS.proAccess;
+      
+      console.log('Starting checkout process with price ID:', priceId);
       
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
@@ -32,26 +36,29 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
         },
         body: JSON.stringify({
           price_id: priceId,
-          success_url: `${window.location.origin}/?success=true`,
-          cancel_url: `${window.location.origin}/?canceled=true`,
+          success_url: `${window.location.origin}/success?success=true`,
+          cancel_url: `${window.location.origin}/success?canceled=true`,
           mode: mode,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create checkout session');
+        console.error('Checkout error response:', errorData);
+        throw new Error(errorData.error || `Failed to create checkout session: ${response.status}`);
       }
 
       const { url } = await response.json();
       
       if (url) {
+        console.log('Redirecting to checkout URL:', url);
         window.location.href = url;
       } else {
         throw new Error('No checkout URL returned');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error);
+      setError(error.message || 'Failed to start checkout process');
       toast.error('Failed to start checkout process. Please try again.');
     } finally {
       setIsLoading(false);
@@ -147,6 +154,12 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
                   <span className="text-gray-300">Cancel anytime</span>
                 </li>
               </ul>
+
+              {error && (
+                <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
 
               <button
                 onClick={handleStripeCheckout}
