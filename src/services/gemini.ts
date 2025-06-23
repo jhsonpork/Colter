@@ -52,7 +52,7 @@ const getTonePrompt = (tone: string) => {
 
 export const generateAd = async (
   businessDescription: string, 
-  tone: string = 'professional',
+  tone = 'professional',
   inputMode = 'description'
 ): Promise<AdResult | null> {
   const toneStyle = getTonePrompt(tone);
@@ -94,7 +94,7 @@ Make it viral, compelling, and conversion-focused. Use psychology triggers like 
 
 export const generateCampaign = async (
   businessDescription: string,
-  tone: string = 'professional'
+  tone = 'professional'
 ): Promise<CampaignDay[] | null> {
   const toneStyle = getTonePrompt(tone);
 
@@ -132,7 +132,7 @@ Each day should have a unique angle while maintaining the ${toneStyle} tone and 
 
 export const rewriteAd = async (
   originalAd: string,
-  tone: string = 'professional'
+  tone = 'professional'
 ): Promise<string> {
   const toneStyle = getTonePrompt(tone);
 
