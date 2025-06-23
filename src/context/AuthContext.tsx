@@ -72,13 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       
       // Ensure profile exists if user is logged in
       if (session?.user) {
-        await ensureProfileExists(session.user.id);
+        ensureProfileExists(session.user.id);
       }
       
       setLoading(false);
@@ -88,30 +88,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
-
-  // Handle refresh token errors by signing out the user
-  useEffect(() => {
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'visible' && user) {
-        try {
-          // Check if session is still valid
-          const { data, error } = await supabase.auth.getSession();
-          if (error || !data.session) {
-            // If there's an error or no session, sign out
-            await signOut();
-            toast.error('Your session has expired. Please sign in again.');
-          }
-        } catch (error) {
-          console.error('Error checking session:', error);
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [user]);
 
   const signUp = async (email: string, password: string) => {
     try {
