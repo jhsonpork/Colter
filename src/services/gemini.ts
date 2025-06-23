@@ -53,7 +53,7 @@ const getTonePrompt = (tone: string) => {
 export const generateAd = async (
   businessDescription: string, 
   tone: string = 'professional',
-  inputMode: 'description' | 'info' = 'description'
+  inputMode = 'description'
 ): Promise<AdResult | null> {
   const toneStyle = getTonePrompt(tone);
   const inputContext = inputMode === 'description' 
