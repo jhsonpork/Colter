@@ -2,9 +2,9 @@ import { AdResult, CampaignDay } from '../types/ad';
 
 const GEMINI_API_KEYS = [
   'AIzaSyBaqYfsUxcH5_UfV0U_SI7ISuTX4xSEiVA',
-  'AIzaSyAD5lYQfcAiBXcp7TydtlokjJAA13_U_7g',
-  'AIzaSyDeDs6ij5YIGnZHSCxkhKnuU1cLUR4iBVM',
-  'AIzaSyBIkq3rGyOJWXNHlnOCZqwHAb2-IZCK7lo'
+  'AIzaSyDg1ZK5U_vFHg4QwNw1gCKsVaQd3Q5VjIY',
+  'AIzaSyBwgtynSmx4PA7SW4xHkBlLIGrGxqLxGyA',
+  'AIzaSyDPELlGWyEcPsJbraoACArB5zQoT9kIVwE'
 ];
 
 let currentKeyIndex = 0;
