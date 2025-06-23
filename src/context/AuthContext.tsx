@@ -100,52 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  // Handle refresh token errors by signing out the user
-  useEffect(() => {
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'visible' && user) {
-        try {
-          // Check if session is still valid
-          const { data, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error('Session check error:', error);
-            await signOut();
-            toast.error('Your session has expired. Please sign in again.');
-          } else if (!data.session) {
-            console.log('No session found during visibility check');
-            await signOut();
-            toast.error('Your session has expired. Please sign in again.');
-          }
-        } catch (error) {
-          console.error('Error checking session:', error);
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Also check session validity periodically
-    const intervalId = setInterval(async () => {
-      if (user) {
-        try {
-          const { data, error } = await supabase.auth.getSession();
-          if (error || !data.session) {
-            console.log('Session invalid during interval check');
-            await signOut();
-            toast.error('Your session has expired. Please sign in again.');
-          }
-        } catch (error) {
-          console.error('Error in interval session check:', error);
-        }
-      }
-    }, 60000); // Check every minute
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearInterval(intervalId);
-    };
-  }, [user]);
-
   const signUp = async (email: string, password: string) => {
     try {
       const response = await supabase.auth.signUp({
@@ -155,9 +109,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailRedirectTo: `${window.location.origin}/auth`
         }
       });
-      
-      // The profile creation is now handled by the database trigger
-      // We don't need to manually create a profile here anymore
       
       return response;
     } catch (error) {
@@ -191,6 +142,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
+      // Clear any local storage items that might be causing issues
+      localStorage.removeItem('supabase.auth.token');
     } catch (error) {
       console.error('Error during sign out:', error);
     }

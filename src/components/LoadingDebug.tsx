@@ -45,8 +45,8 @@ const LoadingDebug: React.FC = () => {
         }
         
         // Check for memory issues
-        if (window.performance && 'memory' in window.performance) {
-          const memoryInfo = (window.performance as any).memory;
+        if (window.performance && window.performance.memory) {
+          const memoryInfo = window.performance.memory;
           setLogs(prev => [...prev, `Memory usage: ${Math.round(memoryInfo.usedJSHeapSize / 1048576)}MB / ${Math.round(memoryInfo.jsHeapSizeLimit / 1048576)}MB`]);
         }
       } catch (error) {
