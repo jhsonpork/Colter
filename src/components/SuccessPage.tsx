@@ -1,87 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { supabase } from '../lib/supabase';
 
 const SuccessPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      setIsLoading(true);
-      
-      try {
-        // Check if user is authenticated
-        const { data } = await supabase.auth.getSession();
-        
-        if (!data.session) {
-          setError('No active session found');
-          toast.error('Please sign in to continue');
-          setTimeout(() => navigate('/auth'), 2000);
-          return;
-        }
-        
-        // Check for success or canceled params from Stripe redirect
-        const success = searchParams.get('success');
-        const canceled = searchParams.get('canceled');
+    // Check if user is authenticated
+    if (!user) {
+      toast.error('Please sign in to continue');
+      navigate('/auth');
+      return;
+    }
 
-        if (success === 'true') {
-          toast.success('Payment successful! Welcome to Pro Plan!');
-        } else if (canceled === 'true') {
-          toast.error('Payment canceled. You can try again anytime.');
-        }
+    // Check for success or canceled params from Stripe redirect
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
 
-        // Redirect to home after 3 seconds
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
-      } catch (error) {
-        console.error('Error checking auth:', error);
-        setError('Error checking authentication status');
-        setTimeout(() => navigate('/auth'), 2000);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (success === 'true') {
+      toast.success('Payment successful! Welcome to Pro Plan!');
+    } else if (canceled === 'true') {
+      toast.error('Payment canceled. You can try again anytime.');
+    }
 
-    checkAuth();
-  }, [navigate, searchParams]);
+    // Redirect to home after 5 seconds
+    const timer = setTimeout(() => {
+      navigate('/');
+    }, 5000);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 via-black to-gray-900">
-        <div className="relative z-10 max-w-md w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8 text-center">
-          <Loader2 className="w-16 h-16 text-yellow-400 mx-auto mb-6 animate-spin" />
-          <h1 className="text-3xl font-bold text-white mb-4">Processing...</h1>
-          <p className="text-gray-300 mb-6">
-            Please wait while we verify your payment status.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 via-black to-gray-900">
-        <div className="relative z-10 max-w-md w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8 text-center">
-          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-red-400" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-4">Error</h1>
-          <p className="text-gray-300 mb-6">
-            {error}. Redirecting you to sign in...
-          </p>
-        </div>
-      </div>
-    );
-  }
+    return () => clearTimeout(timer);
+  }, [navigate, searchParams, user]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 via-black to-gray-900">

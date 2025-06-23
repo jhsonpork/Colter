@@ -28,7 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState<Error | null>(null);
 
   // Function to ensure a profile exists for the current user
   const ensureProfileExists = async (userId: string) => {
@@ -60,30 +59,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Get initial session
-    const initAuth = async () => {
-      setLoading(true);
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Ensure profile exists if user is logged in
-        if (session?.user) {
-          await ensureProfileExists(session.user.id);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        setAuthError(error instanceof Error ? error : new Error('Unknown auth error'));
-      } finally {
-        setLoading(false);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      // Ensure profile exists if user is logged in
+      if (session?.user) {
+        ensureProfileExists(session.user.id);
       }
-    };
-
-    initAuth();
+      
+      setLoading(false);
+    });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('Auth state changed:', _event);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -100,6 +89,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
+  // Handle refresh token errors by signing out the user
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && user) {
+        try {
+          // Check if session is still valid
+          const { data, error } = await supabase.auth.getSession();
+          if (error || !data.session) {
+            // If there's an error or no session, sign out
+            await signOut();
+            toast.error('Your session has expired. Please sign in again.');
+          }
+        } catch (error) {
+          console.error('Error checking session:', error);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
   const signUp = async (email: string, password: string) => {
     try {
       const response = await supabase.auth.signUp({
@@ -110,6 +123,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
       
+      // The profile creation is now handled by the database trigger
+      // We don't need to manually create a profile here anymore
+      
       return response;
     } catch (error) {
       console.error('Error during signup:', error);
@@ -118,35 +134,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
-    try {
-      const response = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (response.error) {
-        console.error('Sign in error:', response.error);
-      } else {
-        console.log('Sign in successful');
-      }
-      
-      return response;
-    } catch (error) {
-      console.error('Exception during sign in:', error);
-      return { error: error as Error, data: { session: null, user: null } };
-    }
+    return await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
   };
 
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-      // Clear any local storage items that might be causing issues
-      localStorage.removeItem('supabase.auth.token');
-    } catch (error) {
-      console.error('Error during sign out:', error);
-    }
+    await supabase.auth.signOut();
   };
 
   const resetPassword = async (email: string) => {
@@ -164,41 +159,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     resetPassword,
   };
-
-  // If there's an auth error, show a debug button
-  if (authError && !user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-white mb-4">Authentication Error</h2>
-          <p className="text-red-400 mb-4">{authError.message}</p>
-          <div className="space-y-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full px-4 py-2 bg-yellow-400 text-black font-semibold rounded-lg"
-            >
-              Reload Page
-            </button>
-            <button
-              onClick={async () => {
-                try {
-                  localStorage.clear();
-                  await supabase.auth.signOut();
-                  window.location.href = '/auth';
-                } catch (error) {
-                  console.error('Error clearing session:', error);
-                  window.location.reload();
-                }
-              }}
-              className="w-full px-4 py-2 bg-gray-700 text-white font-semibold rounded-lg"
-            >
-              Clear Session & Restart
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
