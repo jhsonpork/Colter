@@ -4,7 +4,6 @@ import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
 import ToneSelector from './ToneSelector';
 import { downloadCampaignPackage } from '../utils/download';
-import toast from 'react-hot-toast';
 
 interface CampaignGeneratorProps {
   onCampaignGenerated: (campaign: SavedCampaign) => void;
@@ -21,7 +20,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCampaign, setGeneratedCampaign] = useState<CampaignDay[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
@@ -32,17 +30,8 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     }
 
     setIsGenerating(true);
-    setError(null);
-    
     try {
       const campaign = await generateCampaign(businessDescription, selectedTone);
-      
-      if (!campaign) {
-        setError("Failed to generate campaign. Please try again later.");
-        toast.error("Failed to generate campaign. Please try again.");
-        return;
-      }
-      
       setGeneratedCampaign(campaign);
       
       const savedCampaign: SavedCampaign = {
@@ -56,8 +45,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
-      setError("An error occurred while generating your campaign. Please try again.");
-      toast.error("Campaign generation failed. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -65,13 +52,11 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
   };
 
   const handleDownload = () => {
     if (generatedCampaign) {
       downloadCampaignPackage(generatedCampaign);
-      toast.success("Download started!");
     }
   };
 
@@ -100,12 +85,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                 className="w-full h-32 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                          placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
               />
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
               
               <button
                 onClick={handleGenerate}

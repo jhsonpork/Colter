@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { RefreshCw, Loader2, Lock, Copy, ArrowRight } from 'lucide-react';
 import { rewriteAd } from '../services/gemini';
 import ToneSelector from './ToneSelector';
-import toast from 'react-hot-toast';
 
 interface AdRewriterProps {
   onUpgradeClick: () => void;
@@ -14,7 +13,6 @@ const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTria
   const [rewrittenAd, setRewrittenAd] = useState('');
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isRewriting, setIsRewriting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleRewrite = async () => {
     if (!originalAd.trim()) return;
@@ -25,22 +23,11 @@ const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTria
     }
 
     setIsRewriting(true);
-    setError(null);
-    
     try {
       const result = await rewriteAd(originalAd, selectedTone);
-      
-      if (result.startsWith('Error:')) {
-        setError(result);
-        toast.error("Failed to rewrite ad. Please try again.");
-        return;
-      }
-      
       setRewrittenAd(result);
     } catch (error) {
       console.error('Error rewriting ad:', error);
-      setError("An error occurred while rewriting your ad. Please try again.");
-      toast.error("Rewriting failed. Please try again.");
     } finally {
       setIsRewriting(false);
     }
@@ -48,7 +35,6 @@ const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTria
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
   };
 
   return (
@@ -80,12 +66,6 @@ const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTria
               className="w-full h-64 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                        placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
             />
-            
-            {error && (
-              <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
-            )}
             
             <button
               onClick={handleRewrite}

@@ -1,6 +1,5 @@
 import { AdResult, CampaignDay } from '../types/ad';
 
-// Use all 4 API keys in rotation for better reliability
 const GEMINI_API_KEYS = [
   'AIzaSyBaqYfsUxcH5_UfV0U_SI7ISuTX4xSEiVA',
   'AIzaSyDg1ZK5U_vFHg4QwNw1gCKsVaQd3Q5VjIY',
@@ -9,32 +8,12 @@ const GEMINI_API_KEYS = [
 ];
 
 let currentKeyIndex = 0;
-let failedKeys: string[] = [];
 
 const getNextApiKey = () => {
-  // Skip keys that have recently failed
-  let attempts = 0;
-  while (attempts < GEMINI_API_KEYS.length) {
-    const key = GEMINI_API_KEYS[currentKeyIndex];
-    currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
-    
-    if (!failedKeys.includes(key)) {
-      return key;
-    }
-    
-    attempts++;
-  }
-  
-  // If all keys have failed, reset the failed keys list and try again
-  failedKeys = [];
-  return GEMINI_API_KEYS[currentKeyIndex];
+  const key = GEMINI_API_KEYS[currentKeyIndex];
+  currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+  return key;
 };
-
-// Reset failed keys after 5 minutes
-setInterval(() => {
-  failedKeys = [];
-  console.log('Reset failed API keys list');
-}, 5 * 60 * 1000);
 
 const getTonePrompt = (tone: string) => {
   const tonePrompts = {
@@ -52,9 +31,9 @@ const getTonePrompt = (tone: string) => {
 
 export const generateAd = async (
   businessDescription: string, 
-  tone = 'professional',
-  inputMode = 'description'
-): Promise<AdResult | null> {
+  tone: string = 'professional',
+  inputMode: 'description' | 'info' = 'description'
+): Promise<AdResult> => {
   const toneStyle = getTonePrompt(tone);
   const inputContext = inputMode === 'description' 
     ? 'Business Description' 
@@ -83,19 +62,13 @@ Generate the following in JSON format:
 Make it viral, compelling, and conversion-focused. Use psychology triggers like scarcity, social proof, and FOMO. Be creative and attention-grabbing while maintaining the ${toneStyle} tone throughout.
 `;
 
-  try {
-    const result = await callGeminiAPI(prompt);
-    return result;
-  } catch (error) {
-    console.error('Failed to generate ad:', error);
-    return null;
-  }
+  return await callGeminiAPI(prompt);
 };
 
 export const generateCampaign = async (
   businessDescription: string,
-  tone = 'professional'
-): Promise<CampaignDay[] | null> {
+  tone: string = 'professional'
+): Promise<CampaignDay[]> => {
   const toneStyle = getTonePrompt(tone);
 
   const prompt = `
@@ -121,19 +94,13 @@ Day themes should include: Problem Awareness, Solution Introduction, Social Proo
 Each day should have a unique angle while maintaining the ${toneStyle} tone and building toward a cohesive campaign narrative.
 `;
 
-  try {
-    const result = await callGeminiAPI(prompt);
-    return result;
-  } catch (error) {
-    console.error('Failed to generate campaign:', error);
-    return null;
-  }
+  return await callGeminiAPI(prompt);
 };
 
 export const rewriteAd = async (
   originalAd: string,
-  tone = 'professional'
-): Promise<string> {
+  tone: string = 'professional'
+): Promise<string> => {
   const toneStyle = getTonePrompt(tone);
 
   const prompt = `
@@ -152,40 +119,31 @@ Rewrite this ad to:
 Return only the rewritten ad copy, no explanations or formatting.
 `;
 
-  try {
-    const result = await callGeminiAPI(prompt);
-    
-    // For rewrite requests, return the text directly
-    if (typeof result === 'string') {
-      return result.trim();
-    }
-    
-    // If it's an object, try to extract text
-    if (result && typeof result === 'object') {
-      return JSON.stringify(result);
-    }
-    
-    return 'Error: Unable to rewrite ad. Please try again.';
-  } catch (error) {
-    console.error('Failed to rewrite ad:', error);
-    return 'Error: Unable to rewrite ad. Please try again.';
+  const result = await callGeminiAPI(prompt);
+  
+  // For rewrite requests, return the text directly
+  if (typeof result === 'string') {
+    return result.trim();
   }
+  
+  // If it's an object, try to extract text
+  if (result && typeof result === 'object') {
+    return JSON.stringify(result);
+  }
+  
+  return 'Error: Unable to rewrite ad. Please try again.';
 };
 
 export const callGeminiAPI = async (prompt: string): Promise<any> => {
-  const maxRetries = GEMINI_API_KEYS.length * 2; // Allow multiple attempts per key
+  const maxRetries = GEMINI_API_KEYS.length;
   let lastError: Error | null = null;
-  let attemptCount = 0;
 
-  while (attemptCount < maxRetries) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
     const apiKey = getNextApiKey();
-    attemptCount++;
     
     try {
-      console.log(`Attempt ${attemptCount}/${maxRetries} with API key ${apiKey.slice(0, 5)}...`);
-      
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: {
@@ -213,20 +171,12 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`API key ${apiKey.slice(0, 5)}... failed with status ${response.status}: ${errorText}`);
-        
-        // Add this key to failed keys list
-        if (!failedKeys.includes(apiKey)) {
-          failedKeys.push(apiKey);
-        }
-        
         throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-        console.error(`API key ${apiKey.slice(0, 5)}... returned invalid response structure:`, data);
         throw new Error('Invalid response structure from Gemini API');
       }
 
@@ -244,37 +194,29 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
-        console.error(`API key ${apiKey.slice(0, 5)}... returned no JSON in response:`, generatedText);
         throw new Error('No JSON found in response');
       }
 
       try {
         const result = JSON.parse(jsonMatch[0]);
-        console.log(`Successfully used API key ${apiKey.slice(0, 5)}...`);
-        
-        // Remove this key from failed keys if it was there
-        failedKeys = failedKeys.filter(k => k !== apiKey);
-        
         return result;
       } catch (parseError) {
         // If JSON parsing fails but it's a rewrite request, return the text
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
-        console.error(`API key ${apiKey.slice(0, 5)}... returned invalid JSON:`, parseError);
         throw new Error('Failed to parse JSON response');
       }
       
     } catch (error) {
       lastError = error as Error;
-      console.error(`Attempt ${attemptCount} failed with API key ${apiKey.slice(0, 5)}...`, error);
+      console.warn(`Attempt ${attempt + 1} failed with API key ${apiKey.slice(0, 10)}...`, error);
       
-      // Add a small delay before retrying
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (attempt < maxRetries - 1) {
+        continue;
+      }
     }
   }
 
-  // If we've exhausted all retries, throw the last error
-  console.error(`All ${maxRetries} API attempts failed. Last error:`, lastError);
-  throw new Error(`All API attempts failed. Last error: ${lastError?.message || 'Unknown error'}`);
+  throw new Error(`All API keys failed. Last error: ${lastError?.message}`);
 };
