@@ -1,7 +1,7 @@
 import { AdResult, CampaignDay } from '../types/ad';
 
 const GEMINI_API_KEYS = [
-  'AIzaSyAOwKPRNd4cGzvipo8Q6ylInU6S8RcPIGo',
+  'AIzaSyBaqYfsUxcH5_UfV0U_SI7ISuTX4xSEiVA',
   'AIzaSyAD5lYQfcAiBXcp7TydtlokjJAA13_U_7g',
   'AIzaSyDeDs6ij5YIGnZHSCxkhKnuU1cLUR4iBVM',
   'AIzaSyBIkq3rGyOJWXNHlnOCZqwHAb2-IZCK7lo'
