@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Loader2 } from 'lucide-react';
+import LoadingDebug from '../LoadingDebug';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -56,33 +57,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // If loading timed out, show error with retry button
   if (showError) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-white mb-4">Loading Timed Out</h2>
-          <p className="text-gray-300 mb-6">
-            We're having trouble loading your account information. This could be due to network issues or authentication problems.
-          </p>
-          <div className="space-y-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full px-4 py-2 bg-yellow-400 text-black font-semibold rounded-lg"
-            >
-              Reload Page
-            </button>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = '/auth';
-              }}
-              className="w-full px-4 py-2 bg-gray-700 text-white font-semibold rounded-lg"
-            >
-              Sign Out & Restart
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingDebug />;
   }
 
   // Show loading spinner

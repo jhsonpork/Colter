@@ -44,16 +44,9 @@ const LoadingDebug: React.FC = () => {
           setLogs(prev => [...prev, `Failed network requests detected: ${failedRequests.length}`]);
         }
         
-        // Check for React rendering issues
-        const renderCount = React.useRef(0);
-        renderCount.current += 1;
-        if (renderCount.current > 100) {
-          setLogs(prev => [...prev, `Possible render loop detected: ${renderCount.current} renders`]);
-        }
-        
         // Check for memory issues
-        if (window.performance && window.performance.memory) {
-          const memoryInfo = window.performance.memory;
+        if (window.performance && 'memory' in window.performance) {
+          const memoryInfo = (window.performance as any).memory;
           setLogs(prev => [...prev, `Memory usage: ${Math.round(memoryInfo.usedJSHeapSize / 1048576)}MB / ${Math.round(memoryInfo.jsHeapSizeLimit / 1048576)}MB`]);
         }
       } catch (error) {
