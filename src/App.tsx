@@ -46,7 +46,7 @@ import AdStyleRoulette from './components/AdStyleRoulette';
 import AdMagnetBreakdown from './components/AdMagnetBreakdown';
 import ViralPerformancePredictor from './components/ViralPerformancePredictor';
 import HookMemoryTest from './components/HookMemoryTest';
-// MORE FEATURES (12 NEW)
+// MORE FEATURES
 import OfferAngleMatcher from './components/OfferAngleMatcher';
 import HookFrameTester from './components/HookFrameTester';
 import CreatorFunnelBuilder from './components/CreatorFunnelBuilder';

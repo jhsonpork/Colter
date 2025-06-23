@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Crown, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
-import toast from 'react-hot-toast';
 
 interface SubscriptionStatusProps {
   onUpgradeClick: () => void;
@@ -27,11 +26,13 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
       }
 
       try {
+        setLoading(true);
+        
         const { data, error } = await supabase
           .from('stripe_user_subscriptions')
           .select('*')
           .maybeSingle();
-
+        
         if (error) {
           console.error('Error fetching subscription:', error);
           // Don't show error toast for subscription fetch errors to avoid confusion
