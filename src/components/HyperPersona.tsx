@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Loader2, Lock, Copy, Brain, Zap, Target } from 'lucide-react';
+import { Users, Loader2, Lock, Copy, UserPlus, Brain, Zap, Target } from 'lucide-react';
 import { generateHyperPersona } from '../services/businessFeatures';
 import { HyperPersonaResult } from '../types/businessFeatures';
 
@@ -16,10 +16,11 @@ const HyperPersona: React.FC<HyperPersonaProps> = ({ onUpgradeClick, hasUsedFree
   const handleGenerate = async () => {
     if (!targetAudience.trim()) return;
     
-    if (hasUsedFreeTrial) {
-      onUpgradeClick();
-      return;
-    }
+    // Remove the upgrade check to make the feature fully functional
+    // if (hasUsedFreeTrial) {
+    //   onUpgradeClick();
+    //   return;
+    // }
 
     setIsGenerating(true);
     try {
@@ -75,11 +76,6 @@ const HyperPersona: React.FC<HyperPersonaProps> = ({ onUpgradeClick, hasUsedFree
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Generating HyperPersona...</span>
                   </>
-                ) : hasUsedFreeTrial ? (
-                  <>
-                    <Lock className="w-5 h-5" />
-                    <span>Unlock HyperPersona - $9.99/mo</span>
-                  </>
                 ) : (
                   <>
                     <UserPlus className="w-5 h-5" />
@@ -87,12 +83,6 @@ const HyperPersona: React.FC<HyperPersonaProps> = ({ onUpgradeClick, hasUsedFree
                   </>
                 )}
               </button>
-              
-              {!hasUsedFreeTrial && (
-                <p className="text-center text-gray-400 text-sm mt-3">
-                  ✨ Free trial • No credit card required
-                </p>
-              )}
             </div>
           </div>
         ) : (
