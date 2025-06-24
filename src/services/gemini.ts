@@ -18,55 +18,13 @@ const GEMINI_API_KEYS = [
   'AIzaSyBQd0rBRvVV3N0bs8ei0ckqD6nFegSSmzY'
 ];
 
-// Track API key usage
-interface KeyStatus {
-  key: string;
-  usageCount: number;
-  lastUsed: number;
-  failedAttempts: number;
-}
+// Simple round-robin key selection
+let currentKeyIndex = 0;
 
-const keyStatuses: KeyStatus[] = GEMINI_API_KEYS.map(key => ({
-  key,
-  usageCount: 0,
-  lastUsed: 0,
-  failedAttempts: 0
-}));
-
-// Get the best available key
-const getNextApiKey = (): KeyStatus => {
-  // Sort by least failed attempts, then by least usage, then by oldest last used
-  const sortedKeys = [...keyStatuses].sort((a, b) => {
-    if (a.failedAttempts !== b.failedAttempts) {
-      return a.failedAttempts - b.failedAttempts;
-    }
-    if (a.usageCount !== b.usageCount) {
-      return a.usageCount - b.usageCount;
-    }
-    return a.lastUsed - b.lastUsed;
-  });
-  
-  const keyStatus = sortedKeys[0];
-  keyStatus.usageCount++;
-  keyStatus.lastUsed = Date.now();
-  
-  return keyStatus;
-};
-
-const markKeyAsFailed = (key: string) => {
-  const keyStatus = keyStatuses.find(ks => ks.key === key);
-  if (keyStatus) {
-    keyStatus.failedAttempts++;
-  }
-};
-
-const resetFailedAttempts = () => {
-  // Reset failed attempts every hour
-  keyStatuses.forEach(ks => {
-    if (Date.now() - ks.lastUsed > 60 * 60 * 1000) {
-      ks.failedAttempts = 0;
-    }
-  });
+const getNextApiKey = () => {
+  const key = GEMINI_API_KEYS[currentKeyIndex];
+  currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+  return key;
 };
 
 const getTonePrompt = (tone: string) => {
@@ -538,35 +496,9 @@ Return only the rewritten ad copy, no explanations or formatting.
 };
 
 export const callGeminiAPI = async (prompt: string): Promise<any> => {
-  // Reset failed attempts for keys that haven't been used in a while
-  resetFailedAttempts();
-  
-  const usedKeys = new Set<string>();
-  const maxRetries = GEMINI_API_KEYS.length;
-  let lastError: Error | null = null;
-
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    // Get the best available key that hasn't been used in this request yet
-    const availableKeys = keyStatuses.filter(ks => !usedKeys.has(ks.key));
-    if (availableKeys.length === 0) {
-      console.warn('All API keys have been tried in this request');
-      break;
-    }
-    
-    const keyStatus = availableKeys.sort((a, b) => {
-      if (a.failedAttempts !== b.failedAttempts) {
-        return a.failedAttempts - b.failedAttempts;
-      }
-      if (a.usageCount !== b.usageCount) {
-        return a.usageCount - b.usageCount;
-      }
-      return a.lastUsed - b.lastUsed;
-    })[0];
-    
-    const apiKey = keyStatus.key;
-    usedKeys.add(apiKey);
-    keyStatus.usageCount++;
-    keyStatus.lastUsed = Date.now();
+  // Try each API key in sequence
+  for (let attempt = 0; attempt < GEMINI_API_KEYS.length; attempt++) {
+    const apiKey = getNextApiKey();
     
     try {
       console.log(`Attempt ${attempt + 1} using API key ${apiKey.slice(0, 5)}...`);
@@ -601,16 +533,14 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
       if (!response.ok) {
         const errorText = await response.text();
         console.warn(`API request failed with key ${apiKey.slice(0, 5)}: ${response.status} - ${errorText}`);
-        markKeyAsFailed(apiKey);
-        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+        continue; // Try the next key
       }
 
       const data = await response.json();
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
         console.warn(`Invalid response structure from Gemini API with key ${apiKey.slice(0, 5)}`);
-        markKeyAsFailed(apiKey);
-        throw new Error('Invalid response structure from Gemini API');
+        continue; // Try the next key
       }
 
       const generatedText = data.candidates[0].content.parts[0].text;
@@ -628,31 +558,26 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
           return generatedText.trim();
         }
         console.warn(`No JSON found in response with key ${apiKey.slice(0, 5)}`);
-        throw new Error('No JSON found in response');
+        continue; // Try the next key
       }
 
       try {
-        const result = JSON.parse(jsonMatch[0]);
-        // Reset failed attempts for this key since it worked
-        keyStatus.failedAttempts = 0;
-        return result;
+        return JSON.parse(jsonMatch[0]);
       } catch (parseError) {
         // If JSON parsing fails but it's a rewrite request, return the text
         if (prompt.includes('Rewrite this ad')) {
           return generatedText.trim();
         }
         console.warn(`Failed to parse JSON response with key ${apiKey.slice(0, 5)}`);
-        throw new Error('Failed to parse JSON response');
+        continue; // Try the next key
       }
       
     } catch (error) {
-      lastError = error as Error;
       console.warn(`Attempt ${attempt + 1} failed with API key ${apiKey.slice(0, 5)}...`, error);
       
       // Add a small delay before trying the next key to avoid rate limiting
-      if (attempt < maxRetries - 1) {
+      if (attempt < GEMINI_API_KEYS.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 200));
-        continue;
       }
     }
   }
