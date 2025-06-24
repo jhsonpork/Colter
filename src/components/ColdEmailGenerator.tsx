@@ -40,7 +40,6 @@ const ColdEmailGenerator: React.FC<ColdEmailGeneratorProps> = ({ onUpgradeClick,
       setGeneratedEmails(result);
     } catch (error) {
       console.error('Error generating emails:', error);
-      alert("There was an error generating your emails. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }

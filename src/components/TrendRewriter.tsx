@@ -28,7 +28,6 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
       setRewrite(result);
     } catch (error) {
       console.error('Error rewriting trend:', error);
-      alert("There was an error rewriting the trend. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }

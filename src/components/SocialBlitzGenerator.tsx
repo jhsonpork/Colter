@@ -43,7 +43,6 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
       setGeneratedContent(result);
     } catch (error) {
       console.error('Error generating social content:', error);
-      alert("There was an error generating your social content. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }
