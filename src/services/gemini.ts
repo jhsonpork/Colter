@@ -488,7 +488,14 @@ Each day should have a unique angle while maintaining the ${toneStyle} tone and 
 `;
 
   try {
-    return await callGeminiAPI(prompt);
+    const result = await callGeminiAPI(prompt);
+    // Ensure we have a valid array of campaign days
+    if (Array.isArray(result) && result.length > 0) {
+      return result;
+    }
+    // If the result is not in the expected format, return mock data
+    console.warn('Campaign generation returned unexpected format:', result);
+    return createMockCampaignDays();
   } catch (error) {
     console.error('Error generating campaign:', error);
     return createMockCampaignDays();

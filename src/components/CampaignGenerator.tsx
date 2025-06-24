@@ -154,6 +154,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                       <h3 className="text-yellow-400 font-bold text-xl">Day {day.day}</h3>
                       <p className="text-gray-400">{day.theme}</p>
                     </div>
+                    
                     <button
                       onClick={() => handleCopy(`Day ${day.day}: ${day.theme}\n\nHeadline: ${day.headline}\n\nAd Copy: ${day.adCopy}\n\nTikTok Script: ${day.tiktokScript}\n\nCaptions: ${day.captions.join('\n')}`)}
                       className="p-2 text-gray-400 hover:text-white transition-colors"
