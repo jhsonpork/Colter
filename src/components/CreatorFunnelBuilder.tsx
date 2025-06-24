@@ -169,7 +169,6 @@ ${funnel.exportFormat}
                   <p className="text-gray-300">{funnel.leadMagnetIdea}</p>
                 </div>
               </div>
-
               <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                 <div className="flex items-center space-x-3 mb-4">
                   <DollarSign className="w-6 h-6 text-green-400" />

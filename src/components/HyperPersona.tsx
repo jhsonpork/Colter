@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Loader2, Lock, Copy, UserPlus, Brain, Zap, Target } from 'lucide-react';
+import { Users, Loader2, Lock, Copy, Brain, Heart, Zap, Target } from 'lucide-react';
 import { generateHyperPersona } from '../services/businessFeatures';
 import { HyperPersonaResult } from '../types/businessFeatures';
 
@@ -16,11 +16,10 @@ const HyperPersona: React.FC<HyperPersonaProps> = ({ onUpgradeClick, hasUsedFree
   const handleGenerate = async () => {
     if (!targetAudience.trim()) return;
     
-    // Remove the upgrade check to make the feature fully functional
-    // if (hasUsedFreeTrial) {
-    //   onUpgradeClick();
-    //   return;
-    // }
+    if (hasUsedFreeTrial) {
+      onUpgradeClick();
+      return;
+    }
 
     setIsGenerating(true);
     try {
