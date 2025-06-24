@@ -45,6 +45,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
+      alert("There was an error generating your campaign. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }

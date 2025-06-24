@@ -30,6 +30,7 @@ const ModularAdAssembler: React.FC<ModularAdAssemblerProps> = ({ onUpgradeClick,
       setAssembledAd(result);
     } catch (error) {
       console.error('Error assembling modular ad:', error);
+      alert("There was an error assembling your ad. Please try again in a few minutes.");
     } finally {
       setIsAssembling(false);
     }
