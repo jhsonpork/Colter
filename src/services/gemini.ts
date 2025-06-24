@@ -86,20 +86,20 @@ const getTonePrompt = (tone: string) => {
 // Mock responses for different tool types
 const createMockAdResult = (): AdResult => {
   return {
-    headline: "Stop Scrolling: This Is What You've Been Looking For",
-    adCopy: "Tired of the same old solutions that don't deliver? Our innovative approach has helped thousands of customers achieve real results. Try it today and see the difference for yourself.",
-    tiktokScript: "[Opening shot - direct to camera]\nHey, stop scrolling for a second. I need to show you something that's going to change how you think about this.\n\n[Middle section - show product/service]\nFor years, people have been struggling with this exact problem. But what if I told you there's a simpler way?\n\n[Closing - call to action]\nTap the link in my bio to learn more. Trust me, you'll thank me later.",
+    headline: "⚠️ Engaging Headline for Your Business",
+    adCopy: "⚠️ This is a mock ad response. Our AI is currently busy. Please try again in a few minutes for a real ad tailored to your business.",
+    tiktokScript: "⚠️ [Opening shot]\nHi there! This is a mock TikTok script.\n\n[Middle section]\nOur AI is currently processing many requests.\n\n[Closing]\nPlease try again soon for a real script!",
     captions: [
-      "Game-changer alert! 🚨 This solution is revolutionizing the industry. Click to see why thousands are switching!",
-      "I wish I'd found this sooner... 😮 The solution you've been searching for is finally here!",
-      "Don't waste another day with outdated methods. This new approach is what you need! ⚡"
+      "⚠️ Mock caption #1. Please try again soon!",
+      "⚠️ Mock caption #2. Our AI is busy right now.",
+      "⚠️ Mock caption #3. We'll be back shortly!"
     ],
     businessType: "Service Business",
     tone: "professional",
     performanceEstimate: {
-      engagementRate: 5.8,
-      clickThroughRate: 2.3,
-      conversionRate: 1.2
+      engagementRate: 5,
+      clickThroughRate: 2,
+      conversionRate: 1
     }
   };
 };
@@ -118,13 +118,13 @@ const createMockCampaignDays = (): CampaignDay[] => {
   return Array.from({ length: 7 }, (_, i) => ({
     day: i + 1,
     theme: themes[i],
-    headline: `Day ${i + 1}: ${themes[i]} - Compelling Headline`,
-    adCopy: `This is compelling ad copy for day ${i + 1} focused on ${themes[i]}. It highlights key benefits and creates interest in your product or service.`,
-    tiktokScript: `[Day ${i + 1} Opening]\nHey there! Today I want to talk about ${themes[i].toLowerCase()}.\n\n[Middle]\nHere's what you need to know about this important aspect of our solution.\n\n[Closing]\nTake action now to see the benefits!`,
+    headline: `⚠️ Mock Headline for Day ${i + 1}`,
+    adCopy: `⚠️ This is a mock ad copy for day ${i + 1}. Our AI is currently busy. Please try again in a few minutes.`,
+    tiktokScript: `⚠️ [Day ${i + 1} Opening]\nThis is a mock TikTok script.\n\n[Middle]\nOur AI is currently processing many requests.\n\n[Closing]\nPlease try again soon!`,
     captions: [
-      `${themes[i]} - Caption option 1: Engaging and attention-grabbing text for social media.`,
-      `${themes[i]} - Caption option 2: Another compelling caption variation for your audience.`,
-      `${themes[i]} - Caption option 3: A third caption alternative to test with your followers.`
+      `⚠️ Mock caption for day ${i + 1}. Please try again soon!`,
+      `⚠️ Another caption option for day ${i + 1}.`,
+      `⚠️ Third caption alternative for day ${i + 1}.`
     ]
   }));
 };
@@ -132,37 +132,37 @@ const createMockCampaignDays = (): CampaignDay[] => {
 const createMockTrendRewrite = (trendTopic: string, userNiche: string) => {
   return {
     originalTrend: trendTopic,
-    tweetVersion: `Just saw the latest about ${trendTopic} and immediately thought about how this affects ${userNiche}. Here's what you need to know: [1/5]`,
-    scriptVersion: `[Opening]\nHey, have you seen the trending news about ${trendTopic}? Let me break down what this means for ${userNiche}.\n\n[Middle]\nThis trend is significant because it directly impacts how we approach our work in ${userNiche}. Here's what you should know...\n\n[Closing]\nMake sure you're prepared for these changes by following these three steps...`,
-    adVersion: `[${userNiche.toUpperCase()} ALERT] The ${trendTopic} trend is changing everything. Here's how our solution helps you stay ahead of the curve while others fall behind.`,
+    tweetVersion: `⚠️ This is a mock tweet adapting "${trendTopic}" for the ${userNiche} niche. Please try again soon for a real adaptation!`,
+    scriptVersion: `⚠️ [Opening]\nHey there! This is a mock script showing how "${trendTopic}" applies to ${userNiche}.\n\n[Middle]\nOur AI is currently busy processing requests.\n\n[Closing]\nTry again soon for a real script!`,
+    adVersion: `⚠️ [${userNiche} AD] This is a mock ad that would normally show how "${trendTopic}" relates to your niche. Please try again soon!`,
     niche: userNiche
   };
 };
 
 const createMockSocialContent = (platform: string, contentType: string) => {
   return {
-    hook: "The one thing nobody tells you about success in this industry...",
-    script: `[Opening]\nStop scrolling for a second. I'm about to share something about ${contentType} that most people miss.\n\n[Middle]\nThe secret that top performers know is that consistency beats perfection every time. Here's what I mean...\n\n[Closing]\nTry this approach for just one week and watch what happens!`,
-    hashtags: ["trending", "success", "industry", "tips", "growth", "strategy", "business", "marketing", "socialmedia", "content"],
+    hook: "⚠️ This is a mock attention-grabbing hook",
+    script: `⚠️ [Opening]\nHey there! This is a mock ${platform} script.\n\n[Middle]\nOur AI is currently busy processing requests.\n\n[Closing]\nTry again soon for a real script!`,
+    hashtags: ["mockhashtag1", "mockhashtag2", "tryagainsoon", "aiisbursy", "mockresponse"],
     captions: [
-      "The strategy that transformed my business (and will transform yours too) 👇",
-      "I wish someone had told me this when I started... would have saved me years of struggle 😮",
-      "This counter-intuitive approach is what separates the top 1% from everyone else ⚡"
+      "⚠️ This is a mock caption #1. Please try again soon!",
+      "⚠️ This is a mock caption #2. Our AI is busy right now.",
+      "⚠️ This is a mock caption #3. We'll be back shortly!"
     ],
     platform: platform,
     contentType: contentType,
-    trendingElements: ["Before/After format", "POV style", "Quick zoom transitions"]
+    trendingElements: ["Mock trending sound", "Mock effect", "Mock format"]
   };
 };
 
 const createMockEmailResult = (emailType: string) => {
   return {
-    subject: `Quick question about your ${emailType} goals`,
-    emailBody: `Hi [Name],\n\nI noticed you're in the [Company] space and thought you might be interested in how we've been helping similar businesses achieve their ${emailType} objectives.\n\nWould you be open to a quick 15-minute call to discuss how we might be able to help you too?\n\nBest regards,\n[Your Name]`,
+    subject: `⚠️ Mock ${emailType} Email Subject Line`,
+    emailBody: `⚠️ Hi [Name],\n\nThis is a mock ${emailType} email. Our AI is currently busy processing requests.\n\nPlease try again soon for a real email template tailored to your business and target audience.\n\nBest regards,\nYour Name`,
     followUps: [
-      "Just following up on my previous email. I'd love to share some insights about how we could help with your goals.",
-      "I wanted to make sure my previous message didn't get lost in your inbox. Are you available for a quick call this week?",
-      "I'll keep this brief - I'm still interested in connecting about how we can help with your objectives. Let me know if you'd like to chat."
+      "⚠️ Mock follow-up email #1. Please try again soon!",
+      "⚠️ Mock follow-up email #2. Our AI is busy right now.",
+      "⚠️ Mock follow-up email #3. We'll be back shortly!"
     ],
     spamScore: 3,
     openRatePrediction: 25,
@@ -173,91 +173,89 @@ const createMockEmailResult = (emailType: string) => {
 const createMockModularAd = (hook: string, pain: string, solution: string, cta: string) => {
   return {
     components: {
-      hook: hook || "Attention-grabbing hook",
-      pain: pain || "Relatable pain point",
-      solution: solution || "Compelling solution",
-      cta: cta || "Clear call to action"
+      hook: hook || "⚠️ Mock hook",
+      pain: pain || "⚠️ Mock pain point",
+      solution: solution || "⚠️ Mock solution",
+      cta: cta || "⚠️ Mock CTA"
     },
     assembledAds: [
       {
         version: "Standard Flow",
-        fullAd: `${hook || "Attention-grabbing hook"} ${pain || "Relatable pain point"} ${solution || "Compelling solution"} ${cta || "Clear call to action"}`,
+        fullAd: `⚠️ ${hook || "Mock hook"} ${pain || "Mock pain"} ${solution || "Mock solution"} ${cta || "Mock CTA"}`,
         effectiveness: 7
       },
       {
         version: "Problem-First",
-        fullAd: `${pain || "Relatable pain point"} ${hook || "Attention-grabbing hook"} ${solution || "Compelling solution"} ${cta || "Clear call to action"}`,
+        fullAd: `⚠️ ${pain || "Mock pain"} ${hook || "Mock hook"} ${solution || "Mock solution"} ${cta || "Mock CTA"}`,
         effectiveness: 6
       },
       {
         version: "Solution-Led",
-        fullAd: `${solution || "Compelling solution"} ${pain || "Relatable pain point"} ${hook || "Attention-grabbing hook"} ${cta || "Clear call to action"}`,
+        fullAd: `⚠️ ${solution || "Mock solution"} ${pain || "Mock pain"} ${hook || "Mock hook"} ${cta || "Mock CTA"}`,
         effectiveness: 5
       }
     ],
     templates: [
-      "[HOOK] → [PAIN] → [SOLUTION] → [CTA]",
-      "[PAIN] → [HOOK] → [SOLUTION] → [CTA]",
-      "[SOLUTION] → [PAIN] → [HOOK] → [CTA]"
+      "⚠️ [HOOK] → [PAIN] → [SOLUTION] → [CTA]",
+      "⚠️ [PAIN] → [HOOK] → [SOLUTION] → [CTA]",
+      "⚠️ [SOLUTION] → [PAIN] → [HOOK] → [CTA]"
     ],
-    randomizedVersion: `${solution || "Compelling solution"} ${cta || "Clear call to action"} ${hook || "Attention-grabbing hook"} ${pain || "Relatable pain point"}`
+    randomizedVersion: `⚠️ ${solution || "Mock solution"} ${cta || "Mock CTA"} ${hook || "Mock hook"} ${pain || "Mock pain"}`
   };
 };
 
 const createMockHyperPersona = (targetAudience: string) => {
   return {
-    demographicProfile: `${targetAudience} typically ranges from 28-45 years old, with higher education and above-average income. They are tech-savvy, value-conscious consumers who research thoroughly before making decisions.`,
-    psychographicSummary: `${targetAudience} is motivated by efficiency, status, and self-improvement. They value authenticity and expertise, and are willing to invest in quality solutions that save them time or enhance their personal/professional image.`,
+    demographicProfile: `⚠️ Mock demographic profile for ${targetAudience}. Our AI is currently busy.`,
+    psychographicSummary: "⚠️ Mock psychographic summary. Please try again soon for a real analysis.",
     psychologicalDrivers: [
       {
-        driver: "Fear of Missing Out (FOMO)",
-        explanation: `${targetAudience} is highly susceptible to social proof and the fear of missing opportunities that peers are benefiting from.`
+        driver: "⚠️ Mock Psychological Driver 1",
+        explanation: "This is a mock explanation of this psychological driver."
       },
       {
-        driver: "Status Signaling",
-        explanation: `${targetAudience} makes purchasing decisions that reflect their desired self-image and social position.`
+        driver: "⚠️ Mock Psychological Driver 2",
+        explanation: "This is a mock explanation of this psychological driver."
       },
       {
-        driver: "Efficiency Optimization",
-        explanation: `${targetAudience} is constantly seeking ways to maximize productivity and minimize wasted time or resources.`
+        driver: "⚠️ Mock Psychological Driver 3",
+        explanation: "This is a mock explanation of this psychological driver."
       }
     ],
     decisionPatterns: [
       {
-        pattern: "Research-Heavy Evaluation",
-        explanation: `${targetAudience} typically conducts extensive research, comparing multiple options before making decisions.`,
-        marketingImplications: "Provide detailed comparison content, case studies, and transparent pricing to support their evaluation process."
+        pattern: "⚠️ Mock Decision Pattern 1",
+        explanation: "This is a mock explanation of this decision pattern.",
+        marketingImplications: "These are mock marketing implications."
       },
       {
-        pattern: "Social Validation Seeking",
-        explanation: `${targetAudience} looks for confirmation from peers and trusted authorities before committing.`,
-        marketingImplications: "Leverage testimonials, expert endorsements, and user statistics prominently in marketing materials."
+        pattern: "⚠️ Mock Decision Pattern 2",
+        explanation: "This is a mock explanation of this decision pattern.",
+        marketingImplications: "These are mock marketing implications."
       }
     ],
     communicationStrategies: {
       messagingApproaches: [
-        "Direct, data-backed claims with specific numbers",
-        "Problem-solution frameworks that emphasize time/resource savings",
-        "Exclusive, insider knowledge framing",
-        "Future-focused benefits with concrete outcomes"
+        "⚠️ Mock messaging approach 1",
+        "⚠️ Mock messaging approach 2",
+        "⚠️ Mock messaging approach 3"
       ],
       channelPreferences: [
-        "Professional social networks (LinkedIn)",
-        "Industry-specific podcasts and newsletters",
-        "Targeted webinars and educational content",
-        "Peer recommendation platforms"
+        "⚠️ Mock channel preference 1",
+        "⚠️ Mock channel preference 2",
+        "⚠️ Mock channel preference 3"
       ]
     },
     objectionHandling: [
       {
-        objection: "Price sensitivity",
-        psychologicalRoot: "Concern about ROI and value justification to stakeholders",
-        recommendedResponse: "Frame pricing in terms of concrete ROI, time savings, and competitive advantage rather than cost."
+        objection: "⚠️ Mock Objection 1",
+        psychologicalRoot: "This is a mock psychological root of the objection.",
+        recommendedResponse: "This is a mock recommended response."
       },
       {
-        objection: "Implementation concerns",
-        psychologicalRoot: "Fear of disruption to existing workflows and systems",
-        recommendedResponse: "Emphasize seamless integration, support resources, and phased adoption approaches."
+        objection: "⚠️ Mock Objection 2",
+        psychologicalRoot: "This is a mock psychological root of the objection.",
+        recommendedResponse: "This is a mock recommended response."
       }
     ]
   };
@@ -265,63 +263,63 @@ const createMockHyperPersona = (targetAudience: string) => {
 
 const createMockCreatorFunnel = (accountHandle: string) => {
   return {
-    accountHandle: accountHandle || "creator_handle",
-    leadMagnetIdea: `"The Ultimate ${accountHandle} Guide: 5 Strategies That Transformed My Business" - A comprehensive PDF guide that showcases your expertise while providing immediately actionable value.`,
+    accountHandle: accountHandle || "⚠️ mock_account",
+    leadMagnetIdea: "⚠️ Mock lead magnet idea. Our AI is currently busy. Please try again soon.",
     emailSequence: [
-      "Welcome Email: Thank them for downloading the guide, introduce yourself briefly, and set expectations for future emails.",
-      "Value Email: Share an additional tip not included in the guide, demonstrating ongoing value.",
-      "Problem Email: Dig deeper into a specific challenge your audience faces, building empathy and connection.",
-      "Solution Email: Introduce your solution/offer as the answer to the problem, with social proof.",
-      "Testimonial Email: Share success stories from clients/customers who've used your solution.",
-      "Objection Email: Address common concerns or objections about your offer.",
-      "Closing Email: Final invitation to take action with clear next steps and deadline if applicable."
+      "⚠️ Mock email #1: Welcome email",
+      "⚠️ Mock email #2: Value email",
+      "⚠️ Mock email #3: Problem email",
+      "⚠️ Mock email #4: Solution email",
+      "⚠️ Mock email #5: Testimonial email",
+      "⚠️ Mock email #6: Objection email",
+      "⚠️ Mock email #7: Closing email"
     ],
-    monetizationApproach: `Based on your content style and audience, a tiered coaching program would be most effective. Start with a lower-priced group program and offer a premium 1:1 option. This leverages your expertise while creating multiple price points for different segments of your audience.`,
+    monetizationApproach: "⚠️ Mock monetization approach. Please try again soon for a real strategy.",
     landingPage: {
-      headline: `Transform Your [Industry] Results With The Proven ${accountHandle} Method`,
-      socialProof: "Join over 1,000+ professionals who have used these strategies to [specific result]. Featured in [Publication/Podcast], [Publication/Podcast], and [Publication/Podcast].",
-      cta: "Get Instant Access: Download The Free Guide Now",
+      headline: "⚠️ Mock Landing Page Headline",
+      socialProof: "⚠️ Mock social proof section. Our AI is currently busy.",
+      cta: "⚠️ Try Again Soon",
       faqs: [
-        "How long will it take to see results? While everyone's journey is different, most of our community members see initial improvements within 2-3 weeks of implementing these strategies.",
-        "Is this right for beginners? Absolutely! The guide is designed with step-by-step instructions suitable for all experience levels.",
-        "Do I need special tools or software? No, the strategies can be implemented with basic tools you likely already have.",
-        "Will this work for my specific situation? The principles in this guide have been successfully applied across various niches and industries.",
-        "What happens after I enter my email? You'll immediately receive the guide in your inbox, along with occasional valuable tips (no spam, ever)."
+        "⚠️ Mock FAQ question #1? Mock answer #1.",
+        "⚠️ Mock FAQ question #2? Mock answer #2.",
+        "⚠️ Mock FAQ question #3? Mock answer #3.",
+        "⚠️ Mock FAQ question #4? Mock answer #4.",
+        "⚠️ Mock FAQ question #5? Mock answer #5."
       ]
     },
-    exportFormat: "The funnel is structured for easy export to popular platforms like ClickFunnels, Kajabi, or even a simple WordPress + email provider setup. All copy is organized by section with clear headings for easy implementation."
+    exportFormat: "⚠️ Mock export format description. Please try again soon."
   };
 };
 
 const createMockCommentExploder = (viralPost: string) => {
   return {
-    viralPost: viralPost || "Viral post content",
+    viralPost: viralPost || "⚠️ Mock viral post",
     extractedComments: [
-      "I've been struggling with this exact problem for years! Finally someone gets it.",
-      "Wait, I never thought about it this way. Mind blown! 🤯",
-      "Can you explain how this works for [specific situation]?",
-      "This is why I follow you! Always bringing the value.",
-      "I tried something similar but it didn't work. Any troubleshooting tips?"
+      "⚠️ Mock extracted comment #1. Our AI is currently busy.",
+      "⚠️ Mock extracted comment #2. Please try again soon.",
+      "⚠️ Mock extracted comment #3. We'll be back shortly!",
+      "⚠️ Mock extracted comment #4. Try again in a few minutes.",
+      "⚠️ Mock extracted comment #5. AI is processing many requests."
     ],
     expandedContent: {
       tiktokHooks: [
-        "You know that viral post about [topic]? Here's what everyone missed in the comments...",
-        "The comment section revealed something shocking about [topic] that nobody's talking about",
-        "When I posted about [topic], I never expected THIS reaction in the comments",
-        "This comment on my viral post changed everything I thought about [topic]",
-        "POV: You're reading the comments on that viral [topic] post and discover this hidden truth"
+        "⚠️ Mock TikTok hook #1 based on comments",
+        "⚠️ Mock TikTok hook #2 based on comments",
+        "⚠️ Mock TikTok hook #3 based on comments",
+        "⚠️ Mock TikTok hook #4 based on comments",
+        "⚠️ Mock TikTok hook #5 based on comments"
       ],
       tweetThreads: [
-        "1/ After my post about [topic] went viral, the comments revealed 5 unexpected insights that deserve their own thread. Here's what I learned from the community...",
-        "1/ The most interesting part of creating viral content? The COMMENTS. Here are 7 surprising reactions to my [topic] post and what they teach us about audience psychology...",
-        "1/ My viral post on [topic] generated 100+ comments. I've analyzed the patterns and discovered these 3 audience segments you need to know about..."
+        "⚠️ Mock tweet thread #1 based on comments",
+        "⚠️ Mock tweet thread #2 based on comments",
+        "⚠️ Mock tweet thread #3 based on comments"
       ],
       videoAngles: [
-        "Addressing the top 3 questions from comments on my viral [topic] post",
-        "Testing the controversial theory from the comments section of my [topic] post",
-        "I asked my followers about [topic] and their responses revealed this pattern",
-        "Comment deep-dive: The unexpected emotional reactions to [topic]",
-        "From comments to content: How audience feedback shaped my approach to [topic]"
+        "⚠️ Mock video angle #1 based on comments",
+        "⚠️ Mock video angle #2 based on comments",
+        "⚠️ Mock video angle #3 based on comments",
+        "⚠️ Mock video angle #4 based on comments",
+        "⚠️ Mock video angle #5 based on comments"
       ]
     }
   };
@@ -329,96 +327,92 @@ const createMockCommentExploder = (viralPost: string) => {
 
 const createMockTimingForecaster = (contentType: string, timezone: string, niche: string) => {
   return {
-    contentType: contentType || "Educational",
-    timezone: timezone || "Eastern Time (ET)",
-    niche: niche || "Business",
+    contentType: contentType || "⚠️ Mock content type",
+    timezone: timezone || "⚠️ Mock timezone",
+    niche: niche || "⚠️ Mock niche",
     predictions: {
-      tiktok: `For ${contentType} content in the ${niche} niche, optimal TikTok posting times are 9-11 AM and 7-9 PM ${timezone} on weekdays. The morning slot catches professionals during commute/coffee breaks, while evening slots target relaxation time. Weekends show 15% lower engagement for business content.`,
-      instagram: `Instagram Reels for ${contentType} content in ${niche} perform best at 12-2 PM and 8-10 PM ${timezone}. Carousels perform better during lunch hours (12-1 PM) when users have time to swipe through multiple slides. Sunday evening shows surprisingly strong performance for educational content.`,
-      youtubeShorts: `YouTube Shorts in the ${niche} niche perform best when posted at 3-5 PM and 8-10 PM ${timezone}. The algorithm typically promotes new Shorts within 24-48 hours, so Thursday/Friday posting maximizes weekend visibility.`,
-      email: `For ${niche} educational content, optimal email sending times are Tuesday-Thursday between 10 AM and 1 PM ${timezone}. Avoid Monday mornings (too busy) and Friday afternoons (weekend mindset). Open rates are typically 23% higher mid-week versus weekend sends.`
+      tiktok: "⚠️ Mock TikTok timing prediction. Our AI is currently busy. Best times are typically 6-9 PM local time.",
+      instagram: "⚠️ Mock Instagram timing prediction. Please try again soon. Best times are typically 11 AM-2 PM local time.",
+      youtubeShorts: "⚠️ Mock YouTube Shorts timing prediction. We'll be back shortly! Best times are typically 4-7 PM local time.",
+      email: "⚠️ Mock email timing prediction. Try again in a few minutes. Best times are typically Tuesday-Thursday 10 AM."
     },
-    reasoning: `The ${niche} audience in ${timezone} typically engages with ${contentType} content during specific windows: morning preparation (7-9 AM), lunch breaks (12-2 PM), commute home (5-7 PM), and evening relaxation (8-10 PM). Platform algorithms also factor in, with TikTok favoring recency, Instagram prioritizing engagement velocity in the first hour, YouTube promoting content that maintains watch time, and email requiring strategic timing to avoid inbox crowding. The specific recommendations balance these factors for maximum visibility and engagement.`
+    reasoning: "⚠️ Mock timing logic explanation. This is a placeholder response while our AI is processing many requests. Please try again soon for a detailed analysis of optimal posting times based on your content type, timezone, and niche."
   };
 };
 
 const createMockStyleRoulette = (businessType: string) => {
-  const styles = ["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"];
-  const platforms = ["TikTok", "Instagram Reels", "YouTube Shorts"];
-  
   return {
-    businessType: businessType || "Business",
+    businessType: businessType || "⚠️ Mock business type",
     randomStyles: Array.from({ length: 10 }, (_, i) => ({
-      style: styles[i],
-      script: `[${styles[i]} Style Script for ${businessType}]\n\nOpening: Start with a compelling hook about ${businessType} that grabs attention immediately.\n\nMiddle: Explain the key problem or opportunity in the ${businessType} industry and how your solution addresses it.\n\nClosing: Clear call to action telling viewers exactly what to do next.`,
-      caption: `${styles[i]} style content that reveals the truth about ${businessType} nobody's talking about. #${businessType.replace(/\s+/g, '')} #content #viral`,
-      hook: `The ${styles[i]} approach to ${businessType} that's changing everything...`,
+      style: ["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i],
+      script: `⚠️ Mock script for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]} style. Our AI is currently busy. Please try again soon for a real script.`,
+      caption: `⚠️ Mock caption for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]} style. Please try again soon!`,
+      hook: `⚠️ Mock hook for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]} style. Our AI is busy right now.`,
       uniqueElements: [
-        `Unique element 1 for ${styles[i]} style`,
-        `Unique element 2 for ${styles[i]} style`,
-        `Unique element 3 for ${styles[i]} style`
+        `⚠️ Mock unique element #1 for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]}`,
+        `⚠️ Mock unique element #2 for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]}`,
+        `⚠️ Mock unique element #3 for ${["Rant", "Skit", "Story", "Q&A", "Interview", "Duet", "Stitch", "Vlog", "POV", "Tutorial"][i]}`
       ],
-      platform: platforms[i % platforms.length]
+      platform: ["TikTok", "Instagram Reels", "YouTube Shorts"][i % 3]
     })),
     styleExplanations: {
-      rant: `Rant style creates engagement through passionate, emotionally-charged delivery about a problem in the ${businessType} industry. Start with "I can't believe..." or "Here's what nobody's telling you about..." and build intensity throughout. Works best when addressing a genuine frustration your audience experiences.`,
-      skit: `Skit style uses character-based scenarios to demonstrate problems/solutions in ${businessType}. Create 2-3 distinct characters (customer, expert, skeptic) and use simple transitions between them. This format excels at showing before/after scenarios and objection handling.`,
-      story: `Story style follows a narrative arc with a clear beginning (problem), middle (journey), and end (resolution) related to ${businessType}. Start with "Let me tell you what happened when..." and create an emotional journey. This format builds deep connection and memorability.`,
-      qa: `Q&A style presents common questions about ${businessType} and provides concise, valuable answers. Start with the question on screen, then deliver a direct answer with supporting points. This format positions you as an expert and performs well with educational content.`,
-      interview: `Interview style creates a conversation format about ${businessType}, even when filming solo. Use questions as text overlays, then answer them as the expert. This creates a dynamic feel and allows you to address specific audience pain points directly.`,
-      duet: `Duet style responds to another creator's content about ${businessType}, adding your expertise or perspective. Find trending content in your niche, then film your reaction and insights alongside it. This leverages existing audiences and trending topics.`,
-      stitch: `Stitch style incorporates a brief clip from another video about ${businessType}, then continues with your own content. Use the original clip to set up a problem or misconception, then deliver your solution or correction. This creates instant context and relevance.`,
-      vlog: `Vlog style follows a day-in-the-life format showing behind-the-scenes of ${businessType}. Film authentic moments that demonstrate your process, challenges, and results. This builds trust through transparency and creates a personal connection.`,
-      pov: `POV (Point of View) style puts the viewer directly in a scenario related to ${businessType}. Start with "POV: You're..." and create a first-person experience. This format creates immediate relevance and emotional connection with your audience.`
+      rant: "⚠️ Mock explanation of rant-style ads. Our AI is currently busy. Please try again soon.",
+      skit: "⚠️ Mock explanation of skit-style content. Please try again soon for real guidance.",
+      story: "⚠️ Mock explanation of storytelling ad approach. Our AI is processing many requests.",
+      qa: "⚠️ Mock explanation of Q&A format execution. Try again in a few minutes.",
+      interview: "⚠️ Mock explanation of fake interview style. We'll be back shortly!",
+      duet: "⚠️ Mock explanation of duet/response style. Our AI is currently busy.",
+      stitch: "⚠️ Mock explanation of stitch/reaction style. Please try again soon.",
+      vlog: "⚠️ Mock explanation of vlog-style ad approach. Our AI is processing many requests.",
+      pov: "⚠️ Mock explanation of POV ad execution. Try again in a few minutes."
     }
   };
 };
 
 const createMockCourseCurriculum = (topic: string) => {
   return {
-    topic: topic || "Course Topic",
+    topic: topic || "⚠️ Mock topic",
     courseDetails: {
-      title: `The Complete ${topic} Mastery System`,
-      subtitle: `Transform your understanding and implementation of ${topic} with this comprehensive, step-by-step program`,
-      positioning: `Unlike other ${topic} courses that focus only on theory, this program delivers practical, implementable strategies with templates, frameworks, and real-world applications.`,
+      title: `⚠️ Mock Course: Complete Guide to ${topic || "This Topic"}`,
+      subtitle: "⚠️ Mock subtitle: Learn everything you need to know in this comprehensive course",
+      positioning: "⚠️ Mock positioning statement. Our AI is currently busy. Please try again soon.",
       audienceLevel: "Beginner to Intermediate"
     },
     curriculum: Array.from({ length: 5 }, (_, i) => ({
       moduleNumber: i + 1,
-      moduleTitle: `Module ${i + 1}: ${["Foundations", "Core Strategies", "Advanced Techniques", "Implementation", "Mastery & Scaling"][i]} of ${topic}`,
+      moduleTitle: `⚠️ Mock Module ${i + 1}: Introduction to ${topic || "This Topic"} ${i + 1}`,
       lessons: Array.from({ length: 3 }, (_, j) => ({
         lessonNumber: j + 1,
-        lessonTitle: `Lesson ${i + 1}.${j + 1}: ${["Understanding", "Implementing", "Mastering"][j]} ${topic} ${["Fundamentals", "Strategies", "Systems"][j]}`,
+        lessonTitle: `⚠️ Mock Lesson ${i + 1}.${j + 1}: Understanding ${topic || "This Topic"} Concept ${j + 1}`,
         goals: [
-          `Understand the core principles of ${topic} ${["basics", "strategies", "advanced concepts"][j]}`,
-          `Learn how to implement ${topic} ${["foundations", "techniques", "systems"][j]} in real-world scenarios`,
-          `Develop confidence in applying ${topic} ${["knowledge", "skills", "expertise"][j]} to your specific situation`
+          `⚠️ Mock goal #1 for lesson ${i + 1}.${j + 1}`,
+          `⚠️ Mock goal #2 for lesson ${i + 1}.${j + 1}`,
+          `⚠️ Mock goal #3 for lesson ${i + 1}.${j + 1}`
         ],
         activities: [
-          `Complete the ${topic} ${["assessment", "worksheet", "implementation plan"][j]}`,
-          `Practice the ${topic} ${["basics", "techniques", "advanced strategies"][j]} with the provided exercises`
+          `⚠️ Mock activity #1 for lesson ${i + 1}.${j + 1}`,
+          `⚠️ Mock activity #2 for lesson ${i + 1}.${j + 1}`
         ],
         quizPrompts: [
-          `What are the three key principles of ${topic} covered in this lesson?`,
-          `How would you apply the ${topic} framework to [specific scenario]?`,
-          `What's the difference between [concept A] and [concept B] in ${topic}?`
+          `⚠️ Mock quiz prompt #1 for lesson ${i + 1}.${j + 1}`,
+          `⚠️ Mock quiz prompt #2 for lesson ${i + 1}.${j + 1}`
         ]
       })),
-      cta: `Ready to master ${["the fundamentals", "core strategies", "advanced techniques", "implementation", "scaling"][i]} of ${topic}? Complete this module and move on to the next level!`
+      cta: `⚠️ Mock CTA for module ${i + 1}. Our AI is currently busy. Please try again soon.`
     })),
     bonusUnits: {
       slidePrompts: [
-        `${topic} Quick-Start Guide: 10 slides summarizing the essential first steps`,
-        `${topic} Case Study: Real-world success story with before/after results`,
-        `${topic} Troubleshooting: Common challenges and solutions`
+        "⚠️ Mock slide prompt #1. Please try again soon!",
+        "⚠️ Mock slide prompt #2. Our AI is busy right now.",
+        "⚠️ Mock slide prompt #3. We'll be back shortly!"
       ],
       videoSegments: [
-        `${topic} in Action: 5-minute demonstration of key techniques`,
-        `Expert Interview: Insights from ${topic} industry leader`,
-        `${topic} Client Transformation: Before and after results`
+        "⚠️ Mock video segment #1. Please try again soon!",
+        "⚠️ Mock video segment #2. Our AI is busy right now.",
+        "⚠️ Mock video segment #3. We'll be back shortly!"
       ],
-      funnelLayout: `The course funnel starts with a free workshop on "The 3 Biggest Mistakes in ${topic}" leading to the main course offer, with upsells for 1:1 coaching and an advanced implementation program.`,
-      ebookDraft: `"The Ultimate ${topic} Handbook" - A comprehensive guide covering the core principles, implementation strategies, and optimization techniques for ${topic} success.`
+      funnelLayout: "⚠️ Mock funnel layout description. Our AI is currently busy. Please try again soon.",
+      ebookDraft: "⚠️ Mock eBook outline. Please try again soon for a real outline tailored to your topic."
     }
   };
 };
@@ -457,8 +451,7 @@ Make it viral, compelling, and conversion-focused. Use psychology triggers like 
 `;
 
   try {
-    const result = await callGeminiAPI(prompt);
-    return result;
+    return await callGeminiAPI(prompt);
   } catch (error) {
     console.error('Error generating ad:', error);
     return createMockAdResult();
@@ -495,8 +488,7 @@ Each day should have a unique angle while maintaining the ${toneStyle} tone and 
 `;
 
   try {
-    const result = await callGeminiAPI(prompt);
-    return result;
+    return await callGeminiAPI(prompt);
   } catch (error) {
     console.error('Error generating campaign:', error);
     return createMockCampaignDays();
@@ -538,10 +530,10 @@ Return only the rewritten ad copy, no explanations or formatting.
       return JSON.stringify(result);
     }
     
-    return 'Unable to rewrite ad. Please try again later.';
+    return '⚠️ Unable to rewrite ad. Please try again later.';
   } catch (error) {
     console.error('Error rewriting ad:', error);
-    return `Our AI is currently busy. Here's your original ad with minor improvements:\n\n${originalAd}\n\n(Please try again in a few minutes for a complete rewrite.)`;
+    return `⚠️ Our AI is currently busy. Here's your original ad with minor improvements:\n\n${originalAd}\n\n(Please try again in a few minutes for a complete rewrite.)`;
   }
 };
 
@@ -673,7 +665,7 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
   } else if (prompt.includes('Create a complete viral ad package')) {
     return createMockAdResult();
   } else if (prompt.includes('Rewrite this ad')) {
-    return `Our AI is currently busy. Please try again in a few minutes for a rewritten ad.`;
+    return `⚠️ Our AI is currently busy. Please try again in a few minutes for a rewritten ad.`;
   } else if (prompt.includes('Take this trending topic and adapt it for this niche')) {
     const trendMatch = prompt.match(/Trending Topic: "([^"]*)"/);
     const nicheMatch = prompt.match(/User's Niche: "([^"]*)"/);
@@ -730,7 +722,7 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
 
   // Generic fallback for other tools
   return {
-    message: "Our AI is currently busy processing many requests. Please try again in a few minutes.",
+    message: "⚠️ Our AI is currently busy processing many requests. Please try again in a few minutes.",
     mockResponse: true,
     timestamp: new Date().toISOString()
   };
