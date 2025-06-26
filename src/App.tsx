@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
-import AdGenerator from './components/AdGenerator';
-import CampaignGenerator from './components/CampaignGenerator';
 import AdRewriter from './components/AdRewriter';
 import SavedCampaigns from './components/SavedCampaigns';
 import ColdEmailGenerator from './components/ColdEmailGenerator';
@@ -53,7 +51,6 @@ import CreatorFunnelBuilder from './components/CreatorFunnelBuilder';
 import CourseSummaryGenerator from './components/CourseSummaryGenerator';
 import CommentExploder from './components/CommentExploder';
 import ViralCTASequencer from './components/ViralCTASequencer';
-import PlatformTimingForecaster from './components/PlatformTimingForecaster';
 import ContentEthicsSanitizer from './components/ContentEthicsSanitizer';
 import ValueLadderBuilder from './components/ValueLadderBuilder';
 import MonetizationGenerator from './components/MonetizationGenerator';
@@ -103,7 +100,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { supabase } from './lib/supabase';
 import SuccessPage from './components/SuccessPage';
 
-type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
+type ActivePage = 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
   'headline-tester' | 'audience-analyzer' | 'pain-extractor' | 'offer-optimizer' | 'script-skit' | 'storyboard' | 
   'emotion-mapper' | 'controversial' | 'flip-script' | 'persona-cta' | 'before-after' | 'metaphor' | 'comment-bait' | 'ad-blocks' |
@@ -112,7 +109,7 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
   'psych-test' | 'visual-builder' | 'style-roulette' | 'magnet-breakdown' | 'performance-predictor' | 'memory-test' |
   // MORE FEATURES
   'offer-angle-matcher' | 'hook-frame-tester' | 'creator-funnel-builder' | 'course-summary-generator' |
-  'comment-exploder' | 'viral-cta-sequencer' | 'platform-timing-forecaster' | 'content-ethics-sanitizer' |
+  'comment-exploder' | 'viral-cta-sequencer' | 'content-ethics-sanitizer' |
   'value-ladder-builder' | 'monetization-generator' | 'content-framework-builder' | 'course-curriculum-builder' |
   // 10 NEW ADDITIONAL FEATURES
   'startup-engine' | 'content-calendar' | 'prompt-debugger' | 'agency-automator' | 'product-launch' |
@@ -125,7 +122,7 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
   'perfect-pricing' | 'audience-trigger' | 'startup-strategy' | 'mini-saas' | 'distribution-stack';
 
 function App() {
-  const [activePage, setActivePage] = useState<ActivePage>('generator');
+  const [activePage, setActivePage] = useState<ActivePage>('rewriter');
   const [generatedAd, setGeneratedAd] = useState<AdResult | null>(null);
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
@@ -272,30 +269,13 @@ function App() {
       <div className="relative z-10">
         <Header onUpgradeClick={handleUpgradeClick} />
         
-        {activePage === 'generator' && !generatedAd && (
+        {activePage === 'rewriter' && !generatedAd && (
           <HeroSection />
         )}
         
         <Navigation activePage={activePage} onPageChange={setActivePage} />
         
         <div className="transition-all duration-500 ease-in-out">
-          {activePage === 'generator' && (
-            <AdGenerator 
-              onAdGenerated={handleAdGenerated}
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-              generatedAd={generatedAd}
-            />
-          )}
-          
-          {activePage === 'campaign' && (
-            <CampaignGenerator 
-              onCampaignGenerated={handleCampaignGenerated}
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
-          )}
-          
           {activePage === 'rewriter' && (
             <AdRewriter 
               onUpgradeClick={handleUpgradeClick}
@@ -610,13 +590,6 @@ function App() {
 
           {activePage === 'viral-cta-sequencer' && (
             <ViralCTASequencer
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
-          )}
-
-          {activePage === 'platform-timing-forecaster' && (
-            <PlatformTimingForecaster
               onUpgradeClick={handleUpgradeClick}
               hasUsedFreeTrial={hasUsedFreeTrial}
             />
