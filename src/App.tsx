@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
+import AdGenerator from './components/AdGenerator';
+import CampaignGenerator from './components/CampaignGenerator';
 import AdRewriter from './components/AdRewriter';
 import SavedCampaigns from './components/SavedCampaigns';
 import ColdEmailGenerator from './components/ColdEmailGenerator';
@@ -100,7 +102,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { supabase } from './lib/supabase';
 import SuccessPage from './components/SuccessPage';
 
-type ActivePage = 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
+type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
   'headline-tester' | 'audience-analyzer' | 'pain-extractor' | 'offer-optimizer' | 'script-skit' | 'storyboard' | 
   'emotion-mapper' | 'controversial' | 'flip-script' | 'persona-cta' | 'before-after' | 'metaphor' | 'comment-bait' | 'ad-blocks' |
@@ -122,7 +124,8 @@ type ActivePage = 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'ex
   'perfect-pricing' | 'audience-trigger' | 'startup-strategy' | 'mini-saas' | 'distribution-stack';
 
 function App() {
-  const [activePage, setActivePage] = useState<ActivePage>('rewriter');
+  const [activePage, setActivePage] = useState<ActivePage>('generator');
+  const [generatedAd, setGeneratedAd] = useState<AdResult | null>(null);
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
@@ -176,6 +179,7 @@ function App() {
   }, []);
 
   const handleAdGenerated = async (ad: AdResult) => {
+    setGeneratedAd(ad);
     // Disable this for now to make all features fully functional
     // setHasUsedFreeTrial(true);
     
@@ -267,11 +271,30 @@ function App() {
       <div className="relative z-10">
         <Header onUpgradeClick={handleUpgradeClick} />
         
-        <HeroSection />
+        {activePage === 'generator' && !generatedAd && (
+          <HeroSection />
+        )}
         
         <Navigation activePage={activePage} onPageChange={setActivePage} />
         
         <div className="transition-all duration-500 ease-in-out">
+          {activePage === 'generator' && (
+            <AdGenerator 
+              onAdGenerated={handleAdGenerated}
+              onUpgradeClick={handleUpgradeClick}
+              hasUsedFreeTrial={hasUsedFreeTrial}
+              generatedAd={generatedAd}
+            />
+          )}
+          
+          {activePage === 'campaign' && (
+            <CampaignGenerator 
+              onCampaignGenerated={handleCampaignGenerated}
+              onUpgradeClick={handleUpgradeClick}
+              hasUsedFreeTrial={hasUsedFreeTrial}
+            />
+          )}
+          
           {activePage === 'rewriter' && (
             <AdRewriter 
               onUpgradeClick={handleUpgradeClick}

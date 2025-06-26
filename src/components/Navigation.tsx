@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { RefreshCw, Archive, Mail, Video, Users, Download, GitCompare, Target, Lightbulb, TrendingUp, Shuffle, Palette, Package, Search, BarChart3, Heart, AlertTriangle, Settings, Play, Camera, Brain, MessageSquare, RotateCcw, UserCheck, ArrowUpDown, Layers, MessageCircle, Blocks, BookOpen, Puzzle, Crosshair, Shield, Clock, UserPlus, TestTube, Monitor, Dice6, Magnet, Activity, Zap as ZapIcon, Target as TargetIcon, Play as PlayIcon, Fuel as Funnel, BookOpen as BookOpenIcon, MessageSquare as MessageSquareIcon, ListOrdered, Clock as ClockIcon, Shield as ShieldIcon, BarChartHorizontal, DollarSign, LayoutTemplate, GraduationCap, ChevronDown, Rocket, CalendarDays, Wrench, Briefcase, PackageOpen, AlertOctagon, Coins, FileImage, FileBox, HandshakeIcon, FileText, Globe, PresentationIcon } from 'lucide-react';
+import { Zap, Calendar, RefreshCw, Archive, Mail, Video, Users, Download, GitCompare, Target, Lightbulb, TrendingUp, Shuffle, Palette, Package, Search, BarChart3, Heart, AlertTriangle, Settings, Play, Camera, Brain, MessageSquare, RotateCcw, UserCheck, ArrowUpDown, Layers, MessageCircle, Blocks, BookOpen, Puzzle, Crosshair, Shield, Clock, UserPlus, TestTube, Monitor, Dice6, Magnet, Activity, Zap as ZapIcon, Target as TargetIcon, Play as PlayIcon, Fuel as Funnel, BookOpen as BookOpenIcon, MessageSquare as MessageSquareIcon, ListOrdered, Clock as ClockIcon, Shield as ShieldIcon, BarChartHorizontal, DollarSign, LayoutTemplate, GraduationCap, ChevronDown, Rocket, CalendarDays, Wrench, Briefcase, PackageOpen, AlertOctagon, Coins, FileImage, FileBox, HandshakeIcon, FileText, Globe, PresentationIcon } from 'lucide-react';
 import MoreFeaturesDropdown from './MoreFeaturesDropdown';
 
-type ActivePage = 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
+type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
   'headline-tester' | 'audience-analyzer' | 'pain-extractor' | 'offer-optimizer' | 'script-skit' | 'storyboard' | 
   'emotion-mapper' | 'controversial' | 'flip-script' | 'persona-cta' | 'before-after' | 'metaphor' | 'comment-bait' | 'ad-blocks' |
@@ -32,7 +32,9 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
   const [showMoreFeatures, setShowMoreFeatures] = useState(false);
   
   const navItems = [
-    // Core Features (1)
+    // Core Features (3)
+    { id: 'generator' as ActivePage, label: 'Ad Generator', icon: Zap, category: 'core' },
+    { id: 'campaign' as ActivePage, label: '7-Day Campaign', icon: Calendar, category: 'core' },
     { id: 'rewriter' as ActivePage, label: 'Ad Rewriter', icon: RefreshCw, category: 'core' },
     
     // Analysis Tools (5)
@@ -109,7 +111,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
     { id: 'viral-cta-sequencer' as ActivePage, label: 'Viral CTA Sequencer', icon: ListOrdered },
     { id: 'content-ethics-sanitizer' as ActivePage, label: 'Ethics Sanitizer', icon: ShieldIcon },
     { id: 'value-ladder-builder' as ActivePage, label: 'Value Ladder Builder', icon: BarChartHorizontal },
-    { id: 'monetization-generator' as ActivePage, label: '2-Min Monetizer', icon: DollarSign },
+    { id: 'monetization-generator' as ActivePage, label: 'Monetizer', icon: DollarSign },
     { id: 'content-framework-builder' as ActivePage, label: 'Content Framework', icon: LayoutTemplate },
     { id: 'course-curriculum-builder' as ActivePage, label: 'Course Curriculum', icon: GraduationCap },
   ];
