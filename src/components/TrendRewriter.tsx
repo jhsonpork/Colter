@@ -215,7 +215,7 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
 
             {/* Usage Tips */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-              <h4 className="text-yellow-400 font-bold text-lg mb-4">💡 Trendjacking Tips</h4>
+              <h4 className="text-yellow-400 font-bold text-lg mb-4">🎯 Trendjacking Tips</h4>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <h5 className="text-white font-semibold mb-2">Best Practices</h5>
