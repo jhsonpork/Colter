@@ -344,21 +344,6 @@ const createMockCommentExploder = (viralPost: string) => {
   };
 };
 
-const createMockTimingForecaster = (contentType: string, timezone: string, niche: string) => {
-  return {
-    contentType: contentType || "Educational",
-    timezone: timezone || "Eastern Time (ET)",
-    niche: niche || "Business",
-    predictions: {
-      tiktok: `For ${contentType} content in the ${niche} niche, optimal TikTok posting times are Tuesday and Thursday between 7-9 PM ${timezone}. This timing captures users during evening relaxation when they're most receptive to educational content.`,
-      instagram: `Instagram Reels for ${niche} perform best Monday, Wednesday, and Friday from 12-2 PM ${timezone} when professionals are on lunch breaks. For carousels, weekends 10 AM-12 PM show higher engagement as users have more time to swipe through educational content.`,
-      youtubeShorts: `YouTube Shorts in the ${niche} space see peak performance on Sunday evenings between 6-8 PM ${timezone} when viewers are preparing for the week ahead and seeking valuable information.`,
-      email: `For ${niche} email content, Tuesday and Wednesday mornings between 9:30-10:30 AM ${timezone} show highest open rates, as professionals are settled into their workday but not yet overwhelmed with meetings.`
-    },
-    reasoning: `The ${niche} audience in ${timezone} typically consists of professionals who engage with content during specific windows in their daily routine. ${contentType} content requires more attention and cognitive engagement, making timing especially critical. Morning consumption (9-11 AM) works well for detailed learning, while evening consumption (7-9 PM) is better for inspirational or overview content. Weekend patterns shift significantly, with longer engagement windows but lower immediate action rates. These recommendations are optimized for algorithm distribution patterns as of 2025, accounting for platform-specific timing preferences.`
-  };
-};
-
 const createMockStyleRoulette = (businessType: string) => {
   return {
     businessType: businessType || "Business",
@@ -723,15 +708,6 @@ export const callGeminiAPI = async (prompt: string): Promise<any> => {
   } else if (prompt.includes('Extract and expand comments from this post')) {
     const postMatch = prompt.match(/Viral Post: "([^"]*)"/);
     return createMockCommentExploder(postMatch ? postMatch[1] : "");
-  } else if (prompt.includes('Predict optimal posting times')) {
-    const contentTypeMatch = prompt.match(/Content Type: "([^"]*)"/);
-    const timezoneMatch = prompt.match(/Timezone: "([^"]*)"/);
-    const nicheMatch = prompt.match(/Niche: "([^"]*)"/);
-    return createMockTimingForecaster(
-      contentTypeMatch ? contentTypeMatch[1] : "",
-      timezoneMatch ? timezoneMatch[1] : "",
-      nicheMatch ? nicheMatch[1] : ""
-    );
   } else if (prompt.includes('Create random ad styles with complete content')) {
     const businessTypeMatch = prompt.match(/Business Type: "([^"]*)"/);
     return createMockStyleRoulette(businessTypeMatch ? businessTypeMatch[1] : "");
