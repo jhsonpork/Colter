@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
 import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
@@ -33,12 +33,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     setIsGenerating(true);
     try {
       const campaign = await generateCampaign(businessDescription, selectedTone);
-      
-      // Set the generated campaign to state
       setGeneratedCampaign(campaign);
       setShowResults(true);
       
-      // Create saved campaign object
       const savedCampaign: SavedCampaign = {
         id: Date.now().toString(),
         name: `7-Day Campaign`,
@@ -47,11 +44,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
         type: 'campaign'
       };
       
-      // Pass to parent for saving
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
-      alert("There was an error generating your campaign. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }
@@ -65,6 +60,12 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     if (generatedCampaign) {
       downloadCampaignPackage(generatedCampaign);
     }
+  };
+
+  const handleNewCampaign = () => {
+    setShowResults(false);
+    setBusinessDescription('');
+    setGeneratedCampaign(null);
   };
 
   return (
@@ -141,6 +142,14 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Campaign</span>
+                </button>
+                <button
+                  onClick={handleNewCampaign}
+                  className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 
+                           transition-all duration-300 flex items-center space-x-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>Create New Campaign</span>
                 </button>
                 <button
                   onClick={onUpgradeClick}

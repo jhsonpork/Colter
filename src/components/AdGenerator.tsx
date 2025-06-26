@@ -42,7 +42,6 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
       setShowResults(true);
     } catch (error) {
       console.error('Error generating ad:', error);
-      alert("There was an error generating your ad. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }
