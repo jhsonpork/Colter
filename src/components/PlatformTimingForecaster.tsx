@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import { Clock, Loader2, Lock, Copy, Calendar, Globe } from 'lucide-react';
+import { forecastTiming } from '../services/moreFeatures';
+import { PlatformTimingForecaster as PlatformTimingForecasterType } from '../types/moreFeatures';
 
 interface PlatformTimingForecasterProps {
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
-}
-
-interface TimingPrediction {
-  contentType: string;
-  timezone: string;
-  niche: string;
-  predictions: {
-    tiktok: string;
-    instagram: string;
-    youtubeShorts: string;
-    email: string;
-  };
-  reasoning: string;
 }
 
 const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onUpgradeClick, hasUsedFreeTrial }) => {
@@ -24,8 +13,7 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
   const [timezone, setTimezone] = useState('');
   const [niche, setNiche] = useState('');
   const [isForecasting, setIsForecasting] = useState(false);
-  const [forecast, setForecast] = useState<TimingPrediction | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [forecast, setForecast] = useState<PlatformTimingForecasterType | null>(null);
 
   const contentTypes = [
     'Educational', 'Entertainment', 'Inspirational', 'Tutorial',
@@ -52,30 +40,11 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
     }
 
     setIsForecasting(true);
-    setError(null);
-    
     try {
-      // Create a mock forecast for demonstration
-      const mockForecast: TimingPrediction = {
-        contentType: contentType,
-        timezone: timezone,
-        niche: niche,
-        predictions: {
-          tiktok: `For ${contentType} content in the ${niche} niche, optimal TikTok posting times are Tuesday and Thursday between 7-9 PM ${timezone}. This timing captures users during evening relaxation when they're most receptive to educational content.`,
-          instagram: `Instagram Reels for ${niche} perform best Monday, Wednesday, and Friday from 12-2 PM ${timezone} when professionals are on lunch breaks. For carousels, weekends 10 AM-12 PM show higher engagement as users have more time to swipe through educational content.`,
-          youtubeShorts: `YouTube Shorts in the ${niche} space see peak performance on Sunday evenings between 6-8 PM ${timezone} when viewers are preparing for the week ahead and seeking valuable information.`,
-          email: `For ${niche} email content, Tuesday and Wednesday mornings between 9:30-10:30 AM ${timezone} show highest open rates, as professionals are settled into their workday but not yet overwhelmed with meetings.`
-        },
-        reasoning: `The ${niche} audience in ${timezone} typically consists of professionals who engage with content during specific windows in their daily routine. ${contentType} content requires more attention and cognitive engagement, making timing especially critical. Morning consumption (9-11 AM) works well for detailed learning, while evening consumption (7-9 PM) is better for inspirational or overview content. Weekend patterns shift significantly, with longer engagement windows but lower immediate action rates. These recommendations are optimized for algorithm distribution patterns as of 2025, accounting for platform-specific timing preferences.`
-      };
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setForecast(mockForecast);
+      const result = await forecastTiming(contentType, timezone, niche);
+      setForecast(result);
     } catch (error) {
       console.error('Error forecasting timing:', error);
-      setError('There was an error generating your timing forecast. Please try again.');
     } finally {
       setIsForecasting(false);
     }
@@ -146,12 +115,6 @@ const PlatformTimingForecaster: React.FC<PlatformTimingForecasterProps> = ({ onU
                   </select>
                 </div>
               </div>
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
               
               <button
                 onClick={handleForecast}

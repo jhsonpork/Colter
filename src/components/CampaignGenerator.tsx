@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
+import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
 import ToneSelector from './ToneSelector';
 import { downloadCampaignPackage } from '../utils/download';
@@ -19,7 +20,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCampaign, setGeneratedCampaign] = useState<CampaignDay[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
@@ -30,42 +30,14 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     }
 
     setIsGenerating(true);
-    setError(null);
-    
     try {
-      // Create a mock campaign for demonstration
-      const themes = [
-        "Problem Awareness", 
-        "Solution Introduction", 
-        "Social Proof", 
-        "Urgency/Scarcity", 
-        "Behind-the-Scenes", 
-        "Customer Success", 
-        "Special Offer"
-      ];
-      
-      const mockCampaign: CampaignDay[] = Array.from({ length: 7 }, (_, i) => ({
-        day: i + 1,
-        theme: themes[i],
-        headline: `Day ${i + 1}: ${themes[i]} - Transform Your Business`,
-        adCopy: `This is day ${i + 1} of our campaign focusing on ${themes[i].toLowerCase()}. Our solution helps businesses achieve remarkable results with minimal effort. Join thousands of satisfied customers today.`,
-        tiktokScript: `[Day ${i + 1} Opening]\nWelcome to day ${i + 1} of our series on business transformation.\n\n[Middle]\nToday we're focusing on ${themes[i]}. Did you know that most businesses struggle with this exact issue?\n\n[Closing]\nTap the link in bio to learn how our solution addresses this challenge!`,
-        captions: [
-          `Day ${i + 1}: ${themes[i]} - Learn how our solution can transform your business approach! #BusinessTips #Growth`,
-          `Continuing our series with ${themes[i]}. Swipe up to see how we can help your business thrive! #BusinessStrategy`,
-          `${themes[i]} is critical for business success. Check out our proven approach! #BusinessGrowth #Success`
-        ]
-      }));
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setGeneratedCampaign(mockCampaign);
+      const campaign = await generateCampaign(businessDescription, selectedTone);
+      setGeneratedCampaign(campaign);
       
       const savedCampaign: SavedCampaign = {
         id: Date.now().toString(),
         name: `7-Day Campaign`,
-        campaign: mockCampaign,
+        campaign,
         createdAt: new Date().toISOString(),
         type: 'campaign'
       };
@@ -73,7 +45,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
-      setError('There was an error generating your campaign. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -114,12 +85,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                 className="w-full h-32 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                          placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
               />
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
               
               <button
                 onClick={handleGenerate}

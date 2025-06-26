@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Send, Loader2, Lock, Download, Copy, Upload, Palette } from 'lucide-react';
 import { AdResult } from '../types/ad';
-import ToneSelector from './ToneSelector';
+import { generateAd } from '../services/gemini';
 import AdPreview from './AdPreview';
+import ToneSelector from './ToneSelector';
 import { downloadAdPackage } from '../utils/download';
 
 interface AdGeneratorProps {
@@ -24,7 +25,6 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
@@ -36,36 +36,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     }
 
     setIsGenerating(true);
-    setError(null);
-    
     try {
-      // Create a mock ad result for demonstration
-      const mockAd: AdResult = {
-        headline: `Transform Your ${businessDescription.split(' ').slice(0, 3).join(' ')} Experience Today`,
-        adCopy: `Tired of struggling with outdated solutions? Our innovative approach helps you achieve better results in less time. Join thousands of satisfied customers who've already made the switch.`,
-        tiktokScript: `[Opening shot - direct to camera]\nStop scrolling if you're tired of wasting time on ineffective solutions.\n\n[Show product/service in action]\nOur revolutionary approach has helped thousands achieve remarkable results in record time.\n\n[Show testimonial or results]\nCustomers report up to 3x better outcomes after implementing our system.\n\n[Call to action]\nTap the link in bio to learn how we can transform your experience today.`,
-        captions: [
-          `Ready to transform your experience? Our solution delivers better results in less time. Link in bio to learn more! #Innovation #Growth`,
-          `Stop struggling with outdated methods! Our revolutionary approach is helping people thrive. Learn more at the link! #Solutions #Growth`,
-          `Thousands have already made the switch. Will you be next? Click the link to find out how we can help! #Success #Innovation`
-        ],
-        businessType: input.split(' ').slice(0, 2).join(' '),
-        tone: selectedTone,
-        performanceEstimate: {
-          engagementRate: 8.5,
-          clickThroughRate: 3.2,
-          conversionRate: 1.8
-        }
-      };
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      onAdGenerated(mockAd);
+      const result = await generateAd(input, selectedTone, inputMode);
+      onAdGenerated(result);
       setShowResults(true);
     } catch (error) {
       console.error('Error generating ad:', error);
-      setError('There was an error generating your ad. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -148,12 +124,6 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   className="w-full h-40 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                            placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
                 />
-              )}
-              
-              {error && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
               )}
               
               <button
