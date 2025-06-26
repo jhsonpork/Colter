@@ -75,13 +75,24 @@ const HyperPersona: React.FC<HyperPersonaProps> = ({ onUpgradeClick, hasUsedFree
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Generating HyperPersona...</span>
                   </>
+                ) : hasUsedFreeTrial ? (
+                  <>
+                    <Lock className="w-5 h-5" />
+                    <span>Unlock HyperPersona - $9.99/mo</span>
+                  </>
                 ) : (
                   <>
-                    <UserPlus className="w-5 h-5" />
+                    <Users className="w-5 h-5" />
                     <span>Generate HyperPersona</span>
                   </>
                 )}
               </button>
+              
+              {!hasUsedFreeTrial && (
+                <p className="text-center text-gray-400 text-sm mt-3">
+                  ✨ Free trial • No credit card required
+                </p>
+              )}
             </div>
           </div>
         ) : (
