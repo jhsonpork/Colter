@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
 import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
@@ -20,6 +20,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCampaign, setGeneratedCampaign] = useState<CampaignDay[] | null>(null);
+  const [showResults, setShowResults] = useState(false);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
@@ -32,8 +33,12 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     setIsGenerating(true);
     try {
       const campaign = await generateCampaign(businessDescription, selectedTone);
-      setGeneratedCampaign(campaign);
       
+      // Set the generated campaign to state
+      setGeneratedCampaign(campaign);
+      setShowResults(true);
+      
+      // Create saved campaign object
       const savedCampaign: SavedCampaign = {
         id: Date.now().toString(),
         name: `7-Day Campaign`,
@@ -42,9 +47,11 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
         type: 'campaign'
       };
       
+      // Pass to parent for saving
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
+      alert("There was an error generating your campaign. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }
@@ -63,7 +70,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   return (
     <section className="px-6 py-12">
       <div className="max-w-6xl mx-auto">
-        {!generatedCampaign ? (
+        {!showResults ? (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold text-white text-center mb-4">
               7-Day Viral Campaign Generator
@@ -147,7 +154,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
             </div>
 
             <div className="grid gap-6">
-              {generatedCampaign.map((day, index) => (
+              {generatedCampaign && generatedCampaign.map((day, index) => (
                 <div key={index} className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <div>
