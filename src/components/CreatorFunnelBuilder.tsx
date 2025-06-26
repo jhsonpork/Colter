@@ -39,7 +39,7 @@ const CreatorFunnelBuilder: React.FC<CreatorFunnelBuilderProps> = ({ onUpgradeCl
   const handleDownload = () => {
     if (!funnel) return;
 
-    const content = `
+    let content = `
 CREATOR FUNNEL FOR: ${funnel.accountHandle}
 Generated: ${new Date().toLocaleDateString()}
 

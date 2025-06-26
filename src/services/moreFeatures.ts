@@ -212,7 +212,7 @@ Generate timing forecast in JSON format:
   "niche": "${niche}",
   "predictions": {
     "tiktok": "optimal TikTok posting time with reasoning",
-    "instagram": "optimal Instagram posting time (Reel vs Carousel)",
+    "instagram": "optimal Instagram posting time for Reels and Carousel",
     "youtubeShorts": "optimal YouTube Shorts posting time",
     "email": "optimal email send time based on niche"
   },
