@@ -79,19 +79,6 @@ export interface ViralCTASequencer {
   }[];
 }
 
-export interface PlatformTimingForecaster {
-  contentType: string;
-  timezone: string;
-  niche: string;
-  predictions: {
-    tiktok: string;
-    instagram: string;
-    youtubeShorts: string;
-    email: string;
-  };
-  reasoning: string;
-}
-
 export interface ContentEthicsSanitizer {
   originalContent: string;
   flags: {

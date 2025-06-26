@@ -11,7 +11,7 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
   'psych-test' | 'visual-builder' | 'style-roulette' | 'magnet-breakdown' | 'performance-predictor' | 'memory-test' |
   // MORE FEATURES
   'offer-angle-matcher' | 'hook-frame-tester' | 'creator-funnel-builder' | 'course-summary-generator' |
-  'comment-exploder' | 'viral-cta-sequencer' | 'platform-timing-forecaster' | 'content-ethics-sanitizer' |
+  'comment-exploder' | 'viral-cta-sequencer' | 'content-ethics-sanitizer' |
   'value-ladder-builder' | 'monetization-generator' | 'content-framework-builder' | 'course-curriculum-builder' |
   // 10 NEW ADDITIONAL FEATURES
   'startup-engine' | 'content-calendar' | 'prompt-debugger' | 'agency-automator' | 'product-launch' |
@@ -109,7 +109,6 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
     { id: 'course-summary-generator' as ActivePage, label: 'Course Summary Generator', icon: BookOpenIcon },
     { id: 'comment-exploder' as ActivePage, label: 'Comment Exploder', icon: MessageSquareIcon },
     { id: 'viral-cta-sequencer' as ActivePage, label: 'Viral CTA Sequencer', icon: ListOrdered },
-    { id: 'platform-timing-forecaster' as ActivePage, label: 'Timing Forecaster', icon: ClockIcon },
     { id: 'content-ethics-sanitizer' as ActivePage, label: 'Ethics Sanitizer', icon: ShieldIcon },
     { id: 'value-ladder-builder' as ActivePage, label: 'Value Ladder Builder', icon: BarChartHorizontal },
     { id: 'monetization-generator' as ActivePage, label: '2-Min Monetizer', icon: DollarSign },
@@ -176,7 +175,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
         {/* Category Headers */}
         <div className="text-center mb-6">
           <h3 className="text-yellow-400 font-bold text-lg mb-2">🚀 All Features Available</h3>
-          <p className="text-gray-400 text-sm">74 powerful AI tools for viral marketing and business growth</p>
+          <p className="text-gray-400 text-sm">73 powerful AI tools for viral marketing and business growth</p>
         </div>
         
         <div className="flex flex-wrap justify-center gap-2">
@@ -219,7 +218,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
             <span>More</span>
             {showMoreFeatures ? <ChevronDown className="w-3 h-3 rotate-180" /> : <ChevronDown className="w-3 h-3" />}
             <span className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-black text-xs px-1 rounded-full font-bold">
-              +22
+              +21
             </span>
           </button>
         </div>
@@ -282,7 +281,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
             <span>🚀 <strong>Specialized:</strong> Email, Social, Influencer</span>
             <span>🧠 <strong>Advanced:</strong> Pain Points, Offers, Scripts, Emotions, CTAs + 7 more</span>
             <span>💎 <strong>Premium:</strong> Ad Explainer, Modular Builder, Goal Matcher + 9 more</span>
-            <span>🔍 <strong>More:</strong> Offer Matcher, Hook Tester, Funnel Builder + 19 more</span>
+            <span>🔍 <strong>More:</strong> Offer Matcher, Hook Tester, Funnel Builder + 18 more</span>
             <span>💼 <strong>Business:</strong> Contract Negotiator, Regulation Scanner + 8 more</span>
           </div>
         </div>
