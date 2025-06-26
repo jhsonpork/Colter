@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Zap, Calendar, RefreshCw, Archive, Mail, Video, Users, Download, GitCompare, Target, Lightbulb, TrendingUp, Shuffle, Palette, Package, Search, BarChart3, Heart, AlertTriangle, Settings, Play, Camera, Brain, MessageSquare, RotateCcw, UserCheck, ArrowUpDown, Layers, MessageCircle, Blocks, BookOpen, Puzzle, Crosshair, Shield, Clock, UserPlus, TestTube, Monitor, Dice6, Magnet, Activity, Zap as ZapIcon, Target as TargetIcon, Play as PlayIcon, Fuel as Funnel, BookOpen as BookOpenIcon, MessageSquare as MessageSquareIcon, ListOrdered, Clock as ClockIcon, Shield as ShieldIcon, BarChartHorizontal, DollarSign, LayoutTemplate, GraduationCap, ChevronDown, Rocket, CalendarDays, Wrench, Briefcase, PackageOpen, AlertOctagon, Coins, FileImage, FileBox, HandshakeIcon, FileText, Globe, PresentationIcon } from 'lucide-react';
+import { RefreshCw, Archive, Mail, Video, Users, Download, GitCompare, Target, Lightbulb, TrendingUp, Shuffle, Palette, Package, Search, BarChart3, Heart, AlertTriangle, Settings, Play, Camera, Brain, MessageSquare, RotateCcw, UserCheck, ArrowUpDown, Layers, MessageCircle, Blocks, BookOpen, Puzzle, Crosshair, Shield, Clock, UserPlus, TestTube, Monitor, Dice6, Magnet, Activity, Zap as ZapIcon, Target as TargetIcon, Play as PlayIcon, Fuel as Funnel, BookOpen as BookOpenIcon, MessageSquare as MessageSquareIcon, ListOrdered, Clock as ClockIcon, Shield as ShieldIcon, BarChartHorizontal, DollarSign, LayoutTemplate, GraduationCap, ChevronDown, Rocket, CalendarDays, Wrench, Briefcase, PackageOpen, AlertOctagon, Coins, FileImage, FileBox, HandshakeIcon, FileText, Globe, PresentationIcon } from 'lucide-react';
 import MoreFeaturesDropdown from './MoreFeaturesDropdown';
 
-type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
+type ActivePage = 'rewriter' | 'saved' | 'email' | 'social' | 'influencer' | 'export' |
   'comparator' | 'personas' | 'angles' | 'trend-rewriter' | 'ab-variations' | 'tone-polisher' | 'campaign-pack' | 'hook-analyzer' |
   'headline-tester' | 'audience-analyzer' | 'pain-extractor' | 'offer-optimizer' | 'script-skit' | 'storyboard' | 
   'emotion-mapper' | 'controversial' | 'flip-script' | 'persona-cta' | 'before-after' | 'metaphor' | 'comment-bait' | 'ad-blocks' |
@@ -32,9 +32,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
   const [showMoreFeatures, setShowMoreFeatures] = useState(false);
   
   const navItems = [
-    // Core Features (3)
-    { id: 'generator' as ActivePage, label: 'Ad Generator', icon: Zap, category: 'core' },
-    { id: 'campaign' as ActivePage, label: '7-Day Campaign', icon: Calendar, category: 'core' },
+    // Core Features (1)
     { id: 'rewriter' as ActivePage, label: 'Ad Rewriter', icon: RefreshCw, category: 'core' },
     
     // Analysis Tools (5)
@@ -101,7 +99,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
     { id: 'distribution-stack' as ActivePage, label: 'Distribution Stack', icon: Layers, category: 'blue', badge: 'NEW' },
   ];
 
-  // MORE FEATURES (12)
+  // MORE FEATURES (11)
   const moreFeatures = [
     { id: 'offer-angle-matcher' as ActivePage, label: 'Offer Angle Matcher', icon: TargetIcon },
     { id: 'hook-frame-tester' as ActivePage, label: 'Hook Frame Tester', icon: PlayIcon },
@@ -175,7 +173,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
         {/* Category Headers */}
         <div className="text-center mb-6">
           <h3 className="text-yellow-400 font-bold text-lg mb-2">🚀 All Features Available</h3>
-          <p className="text-gray-400 text-sm">73 powerful AI tools for viral marketing and business growth</p>
+          <p className="text-gray-400 text-sm">71 powerful AI tools for viral marketing and business growth</p>
         </div>
         
         <div className="flex flex-wrap justify-center gap-2">
