@@ -130,7 +130,7 @@ function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
- 
+
   // Load saved campaigns from localStorage or Supabase if logged in
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -187,7 +187,7 @@ function App() {
     // Save to campaigns
     const newCampaign: SavedCampaign = {
       id: Date.now().toString(),
-      name: `${ad.businessType} Campaign`,
+      name: ${ad.businessType} Campaign,
       ad,
       createdAt: new Date().toISOString(),
       type: 'single'
