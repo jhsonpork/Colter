@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Send, Loader2, Lock, Download, Copy, Upload, Palette } from 'lucide-react';
 import { AdResult } from '../types/ad';
 import { generateAd } from '../services/gemini';
@@ -10,7 +10,7 @@ interface AdGeneratorProps {
   onAdGenerated: (ad: AdResult) => void;
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
-  generatedAd?: AdResult | null;
+  generatedAd: AdResult | null;
 }
 
 const AdGenerator: React.FC<AdGeneratorProps> = ({
@@ -25,20 +25,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
-  const [adResult, setAdResult] = useState<AdResult | null>(null);
-
-  // If generatedAd prop changes, update local state and show results
-  useEffect(() => {
-    if (generatedAd) {
-      setAdResult(generatedAd);
-      setShowResults(true);
-    }
-  }, [generatedAd]);
+  const [adResult, setAdResult] = useState<AdResult | null>(generatedAd);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
-    
+
     if (hasUsedFreeTrial) {
       onUpgradeClick();
       return;
@@ -64,7 +56,6 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
 
   const handleDownload = () => {
     if (adResult) downloadAdPackage(adResult);
-    else if (generatedAd) downloadAdPackage(generatedAd);
   };
 
   const handleNewAd = () => {
@@ -74,8 +65,13 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     setAdResult(null);
   };
 
-  // Use either the local state or the prop from parent
-  const displayAd = adResult || generatedAd;
+  // If generatedAd prop changes, update our local state
+  React.useEffect(() => {
+    if (generatedAd) {
+      setAdResult(generatedAd);
+      setShowResults(true);
+    }
+  }, [generatedAd]);
 
   return (
     <section className="px-6 py-12">
@@ -167,7 +163,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
             </div>
           </div>
         ) : (
-          displayAd && (
+          adResult && (
             <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
               {/* Header & Actions */}
               <div className="text-center mb-8">
@@ -198,37 +194,37 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-yellow-400 font-bold text-lg">Viral Headline</h3>
-                      <button onClick={() => handleCopy(displayAd.headline)} className="p-2 text-gray-400 hover:text-white">
+                      <button onClick={() => handleCopy(adResult.headline)} className="p-2 text-gray-400 hover:text-white">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-white text-xl font-semibold">{displayAd.headline}</p>
+                    <p className="text-white text-xl font-semibold">{adResult.headline}</p>
                   </div>
                   {/* Ad Copy */}
                   <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-yellow-400 font-bold text-lg">Ad Copy</h3>
-                      <button onClick={() => handleCopy(displayAd.adCopy)} className="p-2 text-gray-400 hover:text-white">
+                      <button onClick={() => handleCopy(adResult.adCopy)} className="p-2 text-gray-400 hover:text-white">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-gray-300 leading-relaxed">{displayAd.adCopy}</p>
+                    <p className="text-gray-300 leading-relaxed">{adResult.adCopy}</p>
                   </div>
                   {/* TikTok Script */}
                   <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-yellow-400 font-bold text-lg">TikTok Script</h3>
-                      <button onClick={() => handleCopy(displayAd.tiktokScript)} className="p-2 text-gray-400 hover:text-white">
+                      <button onClick={() => handleCopy(adResult.tiktokScript)} className="p-2 text-gray-400 hover:text-white">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
-                    <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap">{displayAd.tiktokScript}</pre>
+                    <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap">{adResult.tiktokScript}</pre>
                   </div>
                   {/* Captions */}
                   <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                     <h3 className="text-yellow-400 font-bold text-lg mb-4">Caption Variations</h3>
                     <div className="space-y-4">
-                      {displayAd.captions.map((cap, i) => (
+                      {adResult.captions.map((cap, i) => (
                         <div key={i} className="flex justify-between items-start">
                           <p className="text-gray-300">#{i + 1} {cap}</p>
                           <button onClick={() => handleCopy(cap)} className="p-2 text-gray-400 hover:text-white">
@@ -242,7 +238,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
 
                 {/* Preview */}
                 <div>
-                  <AdPreview ad={displayAd} />
+                  <AdPreview ad={adResult} />
                 </div>
               </div>
             </div>

@@ -112,7 +112,7 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
   'psych-test' | 'visual-builder' | 'style-roulette' | 'magnet-breakdown' | 'performance-predictor' | 'memory-test' |
   // MORE FEATURES
   'offer-angle-matcher' | 'hook-frame-tester' | 'creator-funnel-builder' | 'course-summary-generator' |
-  'comment-exploder' | 'viral-cta-sequencer' | 'content-ethics-sanitizer' |
+  'comment-exploder' | 'viral-cta-sequencer' | 'platform-timing-forecaster' | 'content-ethics-sanitizer' |
   'value-ladder-builder' | 'monetization-generator' | 'content-framework-builder' | 'course-curriculum-builder' |
   // 10 NEW ADDITIONAL FEATURES
   'startup-engine' | 'content-calendar' | 'prompt-debugger' | 'agency-automator' | 'product-launch' |
