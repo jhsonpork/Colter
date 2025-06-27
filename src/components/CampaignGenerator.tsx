@@ -80,7 +80,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
               7-Day Viral Campaign Generator
             </h2>
             <p className="text-gray-400 text-center mb-8">
-              Generate a complete week of viral ad content with different angles and approaches
+              Generate a complete week of viral ad content with different angles and approaches, and check them out at the "Saved Campaigns" section
             </p>
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8">
               <div className="mb-6">
