@@ -126,11 +126,11 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
 
 function App() {
   const [activePage, setActivePage] = useState<ActivePage>('generator');
-  
+  const [generatedAd, setGeneratedAd] = useState<AdResult | null>(null);
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
-
+ 
   // Load saved campaigns from localStorage or Supabase if logged in
   useEffect(() => {
     const loadCampaigns = async () => {
