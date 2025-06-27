@@ -34,8 +34,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     try {
       const days = await generateCampaign(businessDescription, selectedTone);
       setCampaignDays(days);     // ← store locally
-      setShowResults(true);      // ← flip into results view
-
+      
       // Build the saved‐campaign object
       const saved: SavedCampaign = {
         id: Date.now().toString(),
@@ -44,7 +43,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
         createdAt: new Date().toISOString(),
         type: 'campaign',
       };
+      
       onCampaignGenerated(saved);
+      setShowResults(true);      // ← flip into results view
     } catch (error) {
       console.error('Error generating campaign:', error);
       alert('There was an error generating your campaign. Please try again shortly.');

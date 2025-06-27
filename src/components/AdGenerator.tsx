@@ -30,7 +30,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
-
+    
     if (hasUsedFreeTrial) {
       onUpgradeClick();
       return;
@@ -56,6 +56,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
 
   const handleDownload = () => {
     if (adResult) downloadAdPackage(adResult);
+    else if (generatedAd) downloadAdPackage(generatedAd);
   };
 
   const handleNewAd = () => {
