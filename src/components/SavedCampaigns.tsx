@@ -160,7 +160,7 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
                   
                   {campaign.type === 'campaign' && campaign.campaign && (
                     <div className="space-y-3">
-                      {campaign.campaign.slice(0, 3).map((day, index) => (
+                      {campaign.campaign.map((day, index) => (
                         <div key={index} className="bg-gray-900/30 rounded p-3">
                           <div className="flex justify-between items-start mb-2">
                             <h5 className="text-white font-semibold">Day {day.day}: {day.theme}</h5>
@@ -175,11 +175,6 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
                           <p className="text-gray-300 text-sm">{day.adCopy}</p>
                         </div>
                       ))}
-                      {campaign.campaign.length > 3 && (
-                        <p className="text-gray-400 text-sm text-center">
-                          +{campaign.campaign.length - 3} more days in campaign
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>

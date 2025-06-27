@@ -21,6 +21,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [campaignDays, setCampaignDays] = useState<CampaignDay[] | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
@@ -34,7 +35,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     try {
       const days = await generateCampaign(businessDescription, selectedTone);
       setCampaignDays(days);     // ← store locally
-      setShowResults(true);      // ← flip into results view
 
       // Build the saved‐campaign object
       const saved: SavedCampaign = {
@@ -45,6 +45,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
         type: 'campaign',
       };
       onCampaignGenerated(saved);
+      
+      // Show success message instead of results
+      setShowSuccessMessage(true);
     } catch (error) {
       console.error('Error generating campaign:', error);
       alert('There was an error generating your campaign. Please try again shortly.');
@@ -63,6 +66,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
 
   const handleNew = () => {
     setShowResults(false);
+    setShowSuccessMessage(false);
     setBusinessDescription('');
     setCampaignDays(null);
   };
@@ -70,7 +74,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   return (
     <section className="px-6 py-12">
       <div className="max-w-6xl mx-auto">
-        {!showResults ? (
+        {!showResults && !showSuccessMessage ? (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold text-white text-center mb-4">
               7-Day Viral Campaign Generator
@@ -116,6 +120,36 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
                   ✨ Free trial • No credit card required
                 </p>
               )}
+            </div>
+          </div>
+        ) : showSuccessMessage ? (
+          <div className="max-w-2xl mx-auto animate-fade-in">
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8 text-center">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-green-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Your 7-Day Campaign is Ready! 🚀
+              </h2>
+              <p className="text-gray-300 mb-6">
+                Your campaign has been generated and saved. You can view it in the "Saved Campaigns" section or export it from "Campaign Export".
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <button
+                  onClick={handleNew}
+                  className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-lg font-semibold flex items-center space-x-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>Create Another Campaign</span>
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold flex items-center space-x-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Campaign</span>
+                </button>
+              </div>
             </div>
           </div>
         ) : (
