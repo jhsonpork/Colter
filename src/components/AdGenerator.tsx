@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Loader2, Lock, Download, Copy, Upload, Palette } from 'lucide-react';
 import { AdResult } from '../types/ad';
 import { generateAd } from '../services/gemini';
@@ -26,6 +26,14 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
   const [adResult, setAdResult] = useState<AdResult | null>(null);
+
+  // If generatedAd prop changes, update local state and show results
+  useEffect(() => {
+    if (generatedAd) {
+      setAdResult(generatedAd);
+      setShowResults(true);
+    }
+  }, [generatedAd]);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;

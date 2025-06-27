@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy, Send } from 'lucide-react';
 import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
@@ -34,7 +34,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     try {
       const days = await generateCampaign(businessDescription, selectedTone);
       setCampaignDays(days);     // ← store locally
-      
+
       // Build the saved‐campaign object
       const saved: SavedCampaign = {
         id: Date.now().toString(),
