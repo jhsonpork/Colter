@@ -187,7 +187,7 @@ function App() {
     // Save to campaigns
     const newCampaign: SavedCampaign = {
       id: Date.now().toString(),
-      name: ${ad.businessType} Campaign,
+      name: `${ad.businessType} Campaign`,
       ad,
       createdAt: new Date().toISOString(),
       type: 'single'

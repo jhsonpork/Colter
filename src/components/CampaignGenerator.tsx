@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
+import { Calendar, Loader2, Lock, Download, Copy, Send } from 'lucide-react';
 import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
 import ToneSelector from './ToneSelector';
@@ -214,4 +214,3 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
 };
 
 export default CampaignGenerator;
-

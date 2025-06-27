@@ -37,6 +37,9 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
     if (campaign.type === 'single' && campaign.ad) {
       return campaign.ad.headline;
     } else if (campaign.type === 'campaign' && campaign.campaign) {
+      if (campaign.campaign.length > 0) {
+        return `${campaign.campaign[0].theme} - ${campaign.campaign[0].headline}`;
+      }
       return `7-day campaign with ${campaign.campaign.length} unique ad concepts`;
     }
     return '';
