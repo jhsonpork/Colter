@@ -33,6 +33,15 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
     });
   };
 
+  const getCampaignPreview = (campaign: SavedCampaign) => {
+    if (campaign.type === 'single' && campaign.ad) {
+      return campaign.ad.headline;
+    } else if (campaign.type === 'campaign' && campaign.campaign) {
+      return `7-day campaign with ${campaign.campaign.length} unique ad concepts`;
+    }
+    return '';
+  };
+
   if (campaigns.length === 0) {
     return (
       <section className="px-6 py-12">
@@ -108,7 +117,7 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
                 {campaign.type === 'campaign' && campaign.campaign && (
                   <div className="bg-gray-900/50 rounded-lg p-4">
                     <p className="text-gray-300 text-sm">
-                      7-day campaign with {campaign.campaign.length} unique ad concepts
+                      {getCampaignPreview(campaign)}
                     </p>
                   </div>
                 )}

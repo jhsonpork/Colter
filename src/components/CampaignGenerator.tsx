@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy } from 'lucide-react';
-import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
+import { generateCampaign } from '../services/gemini';
 import ToneSelector from './ToneSelector';
 import { downloadCampaignPackage } from '../utils/download';
 
@@ -33,8 +33,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
     setIsGenerating(true);
     try {
       const campaign = await generateCampaign(businessDescription, selectedTone);
-      setGeneratedCampaign(campaign);
-      setShowResults(true);
       
       const savedCampaign: SavedCampaign = {
         id: Date.now().toString(),
@@ -44,9 +42,12 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
         type: 'campaign'
       };
       
+      setGeneratedCampaign(campaign);
+      setShowResults(true);
       onCampaignGenerated(savedCampaign);
     } catch (error) {
       console.error('Error generating campaign:', error);
+      alert("There was an error generating your campaign. Please try again in a few minutes.");
     } finally {
       setIsGenerating(false);
     }
@@ -64,8 +65,8 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
 
   const handleNewCampaign = () => {
     setShowResults(false);
-    setBusinessDescription('');
     setGeneratedCampaign(null);
+    setBusinessDescription('');
   };
 
   return (
@@ -127,7 +128,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
               )}
             </div>
           </div>
-        ) : (
+        ) : generatedCampaign && (
           <div className="space-y-8 animate-fade-in">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-white mb-4">
@@ -163,7 +164,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
             </div>
 
             <div className="grid gap-6">
-              {generatedCampaign && generatedCampaign.map((day, index) => (
+              {generatedCampaign.map((day, index) => (
                 <div key={index} className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <div>

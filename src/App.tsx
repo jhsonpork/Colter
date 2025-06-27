@@ -53,6 +53,7 @@ import CreatorFunnelBuilder from './components/CreatorFunnelBuilder';
 import CourseSummaryGenerator from './components/CourseSummaryGenerator';
 import CommentExploder from './components/CommentExploder';
 import ViralCTASequencer from './components/ViralCTASequencer';
+import PlatformTimingForecaster from './components/PlatformTimingForecaster';
 import ContentEthicsSanitizer from './components/ContentEthicsSanitizer';
 import ValueLadderBuilder from './components/ValueLadderBuilder';
 import MonetizationGenerator from './components/MonetizationGenerator';
@@ -111,7 +112,7 @@ type ActivePage = 'generator' | 'campaign' | 'rewriter' | 'saved' | 'email' | 's
   'psych-test' | 'visual-builder' | 'style-roulette' | 'magnet-breakdown' | 'performance-predictor' | 'memory-test' |
   // MORE FEATURES
   'offer-angle-matcher' | 'hook-frame-tester' | 'creator-funnel-builder' | 'course-summary-generator' |
-  'comment-exploder' | 'viral-cta-sequencer' | 'content-ethics-sanitizer' |
+  'comment-exploder' | 'viral-cta-sequencer' | 'platform-timing-forecaster' | 'content-ethics-sanitizer' |
   'value-ladder-builder' | 'monetization-generator' | 'content-framework-builder' | 'course-curriculum-builder' |
   // 10 NEW ADDITIONAL FEATURES
   'startup-engine' | 'content-calendar' | 'prompt-debugger' | 'agency-automator' | 'product-launch' |
@@ -609,6 +610,13 @@ function App() {
 
           {activePage === 'viral-cta-sequencer' && (
             <ViralCTASequencer
+              onUpgradeClick={handleUpgradeClick}
+              hasUsedFreeTrial={hasUsedFreeTrial}
+            />
+          )}
+
+          {activePage === 'platform-timing-forecaster' && (
+            <PlatformTimingForecaster
               onUpgradeClick={handleUpgradeClick}
               hasUsedFreeTrial={hasUsedFreeTrial}
             />
