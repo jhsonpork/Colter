@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Loader2, Lock, Download, Copy, Send } from 'lucide-react';
 import { generateCampaign } from '../services/gemini';
@@ -215,5 +214,3 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
 };
 
 export default CampaignGenerator;
-
-

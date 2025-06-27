@@ -25,9 +25,9 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
-  const [adResult, setAdResult] = useState<AdResult | null>(null);
+  const [adResult, setAdResult] = useState<AdResult | null>(generatedAd);
 
-  // Initialize adResult from generatedAd prop
+  // Update local state when prop changes
   useEffect(() => {
     if (generatedAd) {
       setAdResult(generatedAd);
@@ -38,7 +38,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
-    
+
     if (hasUsedFreeTrial) {
       onUpgradeClick();
       return;
