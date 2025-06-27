@@ -10,14 +10,12 @@ interface AdGeneratorProps {
   onAdGenerated: (ad: AdResult) => void;
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
-  generatedAd: AdResult | null;
 }
 
-const AdGenerator: React.FC<AdGeneratorProps> = ({ 
-  onAdGenerated, 
-  onUpgradeClick, 
-  hasUsedFreeTrial, 
-  generatedAd 
+const AdGenerator: React.FC<AdGeneratorProps> = ({
+  onAdGenerated,
+  onUpgradeClick,
+  hasUsedFreeTrial,
 }) => {
   const [businessDescription, setBusinessDescription] = useState('');
   const [businessInfo, setBusinessInfo] = useState('');
@@ -25,12 +23,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
-  const [localAd, setLocalAd] = useState<AdResult | null>(null);
+  const [adResult, setAdResult] = useState<AdResult | null>(null);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
-    
+
     if (hasUsedFreeTrial) {
       onUpgradeClick();
       return;
@@ -39,12 +37,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     setIsGenerating(true);
     try {
       const result = await generateAd(input, selectedTone, inputMode);
-      setLocalAd(result);
-      onAdGenerated(result);
-      setShowResults(true);
+      setAdResult(result);          // ← store it locally
+      onAdGenerated(result);        // ← still let parent save it
+      setShowResults(true);         // ← now flip into results view
     } catch (error) {
       console.error('Error generating ad:', error);
-      alert("There was an error generating your ad. Please try again in a few minutes.");
+      alert('There was an error generating your ad. Please try again shortly.');
     } finally {
       setIsGenerating(false);
     }
@@ -55,20 +53,15 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   };
 
   const handleDownload = () => {
-    if (localAd) {
-      downloadAdPackage(localAd);
-    }
+    if (adResult) downloadAdPackage(adResult);
   };
 
   const handleNewAd = () => {
     setShowResults(false);
-    setLocalAd(null);
     setBusinessDescription('');
     setBusinessInfo('');
+    setAdResult(null);
   };
-
-  // Use localAd if available, otherwise fall back to generatedAd from props
-  const adToDisplay = localAd || generatedAd;
 
   return (
     <section className="px-6 py-12">
@@ -78,13 +71,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
             <h2 className="text-3xl font-bold text-white text-center mb-8">
               Create Your Viral Ad
             </h2>
-            
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8">
               {/* Input Mode Toggle */}
               <div className="flex space-x-4 mb-6">
                 <button
                   onClick={() => setInputMode('description')}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium ${
                     inputMode === 'description'
                       ? 'bg-yellow-400 text-black'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -95,7 +87,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                 </button>
                 <button
                   onClick={() => setInputMode('info')}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium ${
                     inputMode === 'info'
                       ? 'bg-yellow-400 text-black'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -114,32 +106,29 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                 </div>
                 <ToneSelector selectedTone={selectedTone} onToneChange={setSelectedTone} />
               </div>
-              
+
+              {/* Textarea */}
               {inputMode === 'description' ? (
                 <textarea
                   value={businessDescription}
                   onChange={(e) => setBusinessDescription(e.target.value)}
-                  placeholder="e.g., I own a coffee shop in downtown that's modern and trendy, targeting young professionals who love artisanal coffee and cozy vibes..."
-                  className="w-full h-32 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
-                           placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
+                  placeholder="e.g., I own a coffee shop in downtown..."
+                  className="w-full h-32 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-yellow-400 outline-none resize-none"
                 />
               ) : (
                 <textarea
                   value={businessInfo}
                   onChange={(e) => setBusinessInfo(e.target.value)}
-                  placeholder="Paste your complete business information, About page, or detailed company description here..."
-                  className="w-full h-40 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
-                           placeholder-gray-400 focus:border-yellow-400 focus:outline-none resize-none"
+                  placeholder="Paste your full business info here..."
+                  className="w-full h-40 bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-yellow-400 outline-none resize-none"
                 />
               )}
-              
+
+              {/* Generate Button */}
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || (!businessDescription.trim() && !businessInfo.trim())}
-                className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-black 
-                         font-bold rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
-                         shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 disabled:opacity-50 
-                         disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-bold rounded-lg flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? (
                   <>
@@ -149,7 +138,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                 ) : hasUsedFreeTrial ? (
                   <>
                     <Lock className="w-5 h-5" />
-                    <span>Unlock More Ads - $9.99/mo</span>
+                    <span>Unlock More Ads – $9.99/mo</span>
                   </>
                 ) : (
                   <>
@@ -158,122 +147,92 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
                   </>
                 )}
               </button>
-              
               {!hasUsedFreeTrial && (
-                <p className="text-center text-gray-400 text-sm mt-3">
-                  ✨ Free trial • No credit card required
-                </p>
+                <p className="text-center text-gray-400 text-sm mt-3">✨ Free trial • No credit card required</p>
               )}
             </div>
           </div>
-        ) : adToDisplay && (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Your Viral Ad Package is Ready! 🚀
-              </h2>
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={handleDownload}
-                  className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
-                           rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
-                           flex items-center space-x-2"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download Package</span>
-                </button>
-                <button
-                  onClick={handleNewAd}
-                  className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 
-                           transition-all duration-300 flex items-center space-x-2"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>Create New Ad</span>
-                </button>
-                <button
-                  onClick={onUpgradeClick}
-                  className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 
-                           transition-all duration-300 flex items-center space-x-2"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Generate More Ads</span>
-                </button>
+        ) : (
+          adResult && (
+            <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+              {/* Header & Actions */}
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  Your Viral Ad Package is Ready! 🚀
+                </h2>
+                <div className="flex justify-center space-x-4">
+                  <button onClick={handleDownload} className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-lg font-semibold flex items-center space-x-2">
+                    <Download className="w-4 h-4" />
+                    <span>Download Package</span>
+                  </button>
+                  <button onClick={handleNewAd} className="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold flex items-center space-x-2">
+                    <Send className="w-4 h-4" />
+                    <span>Create New Ad</span>
+                  </button>
+                  <button onClick={onUpgradeClick} className="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold flex items-center space-x-2">
+                    <Lock className="w-4 h-4" />
+                    <span>Generate More Ads</span>
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Ad Content */}
-              <div className="space-y-6">
-                {/* Headline */}
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-yellow-400 font-bold text-lg">Viral Headline</h3>
-                    <button
-                      onClick={() => handleCopy(adToDisplay.headline)}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
+              {/* Content + Preview */}
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Ad Content */}
+                <div className="space-y-6">
+                  {/* Headline */}
+                  <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-yellow-400 font-bold text-lg">Viral Headline</h3>
+                      <button onClick={() => handleCopy(adResult.headline)} className="p-2 text-gray-400 hover:text-white">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-white text-xl font-semibold">{adResult.headline}</p>
                   </div>
-                  <p className="text-white text-xl font-semibold">{adToDisplay.headline}</p>
-                </div>
-
-                {/* Ad Copy */}
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-yellow-400 font-bold text-lg">Ad Copy</h3>
-                    <button
-                      onClick={() => handleCopy(adToDisplay.adCopy)}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
+                  {/* Ad Copy */}
+                  <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-yellow-400 font-bold text-lg">Ad Copy</h3>
+                      <button onClick={() => handleCopy(adResult.adCopy)} className="p-2 text-gray-400 hover:text-white">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-gray-300 leading-relaxed">{adResult.adCopy}</p>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{adToDisplay.adCopy}</p>
-                </div>
-
-                {/* TikTok Script */}
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-yellow-400 font-bold text-lg">TikTok Script</h3>
-                    <button
-                      onClick={() => handleCopy(adToDisplay.tiktokScript)}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
+                  {/* TikTok Script */}
+                  <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-yellow-400 font-bold text-lg">TikTok Script</h3>
+                      <button onClick={() => handleCopy(adResult.tiktokScript)} className="p-2 text-gray-400 hover:text-white">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap">{adResult.tiktokScript}</pre>
                   </div>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">{adToDisplay.tiktokScript}</p>
-                </div>
-
-                {/* Captions */}
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-400/30 transition-all duration-300">
-                  <h3 className="text-yellow-400 font-bold text-lg mb-4">Caption Variations</h3>
-                  <div className="space-y-4">
-                    {adToDisplay.captions.map((caption, index) => (
-                      <div key={index} className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <span className="text-yellow-400 font-semibold">#{index + 1}</span>
-                          <p className="text-gray-300 mt-1">{caption}</p>
+                  {/* Captions */}
+                  <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                    <h3 className="text-yellow-400 font-bold text-lg mb-4">Caption Variations</h3>
+                    <div className="space-y-4">
+                      {adResult.captions.map((cap, i) => (
+                        <div key={i} className="flex justify-between items-start">
+                          <p className="text-gray-300">#{i + 1} {cap}</p>
+                          <button onClick={() => handleCopy(cap)} className="p-2 text-gray-400 hover:text-white">
+                            <Copy className="w-4 h-4" />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleCopy(caption)}
-                          className="p-2 text-gray-400 hover:text-white transition-colors ml-4"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Ad Preview */}
-              <div>
-                <AdPreview ad={adToDisplay} />
+                {/* Preview */}
+                <div>
+                  <AdPreview ad={adResult} />
+                </div>
               </div>
             </div>
-          </div>
+          )
         )}
       </div>
     </section>
