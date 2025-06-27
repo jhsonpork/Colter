@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Loader2, Lock, Download, Copy, Upload, Palette } from 'lucide-react';
 import { AdResult } from '../types/ad';
 import { generateAd } from '../services/gemini';
@@ -25,12 +25,20 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
-  const [adResult, setAdResult] = useState<AdResult | null>(generatedAd);
+  const [adResult, setAdResult] = useState<AdResult | null>(null);
+
+  // Initialize adResult from generatedAd prop
+  useEffect(() => {
+    if (generatedAd) {
+      setAdResult(generatedAd);
+      setShowResults(true);
+    }
+  }, [generatedAd]);
 
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
-
+    
     if (hasUsedFreeTrial) {
       onUpgradeClick();
       return;
@@ -64,14 +72,6 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
     setBusinessInfo('');
     setAdResult(null);
   };
-
-  // If generatedAd prop changes, update our local state
-  React.useEffect(() => {
-    if (generatedAd) {
-      setAdResult(generatedAd);
-      setShowResults(true);
-    }
-  }, [generatedAd]);
 
   return (
     <section className="px-6 py-12">
