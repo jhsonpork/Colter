@@ -36,6 +36,11 @@ const CommentExploder: React.FC<CommentExploderProps> = ({ onUpgradeClick, hasUs
     navigator.clipboard.writeText(text);
   };
 
+  const handleReset = () => {
+    setViralPost('');
+    setExplodedComments(null);
+  };
+
   return (
     <section className="px-6 py-12">
       <div className="max-w-6xl mx-auto">
@@ -236,6 +241,19 @@ const CommentExploder: React.FC<CommentExploderProps> = ({ onUpgradeClick, hasUs
                   </ul>
                 </div>
               </div>
+            </div>
+
+            {/* Create New Button */}
+            <div className="text-center">
+              <button
+                onClick={handleReset}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
+                         rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
+                         flex items-center space-x-2 mx-auto"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Explode Another Post</span>
+              </button>
             </div>
           </div>
         )}

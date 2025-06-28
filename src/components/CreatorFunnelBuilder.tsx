@@ -12,6 +12,7 @@ const CreatorFunnelBuilder: React.FC<CreatorFunnelBuilderProps> = ({ onUpgradeCl
   const [accountHandle, setAccountHandle] = useState('');
   const [isBuilding, setIsBuilding] = useState(false);
   const [funnel, setFunnel] = useState<CreatorFunnelBuilderType | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleBuild = async () => {
     if (!accountHandle.trim()) return;
@@ -22,11 +23,13 @@ const CreatorFunnelBuilder: React.FC<CreatorFunnelBuilderProps> = ({ onUpgradeCl
     }
 
     setIsBuilding(true);
+    setError(null);
     try {
       const result = await buildCreatorFunnel(accountHandle);
       setFunnel(result);
     } catch (error) {
       console.error('Error building creator funnel:', error);
+      setError('There was an error generating your funnel. Please try again.');
     } finally {
       setIsBuilding(false);
     }
@@ -34,6 +37,12 @@ const CreatorFunnelBuilder: React.FC<CreatorFunnelBuilderProps> = ({ onUpgradeCl
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const handleReset = () => {
+    setAccountHandle('');
+    setFunnel(null);
+    setError(null);
   };
 
   const handleDownload = () => {
@@ -101,11 +110,17 @@ ${funnel.exportFormat}
                   type="text"
                   value={accountHandle}
                   onChange={(e) => setAccountHandle(e.target.value)}
-                  placeholder="e.g., @yourhandle or your content niche..."
+                  placeholder="e.g., @yourhandle or your content niche (fitness, marketing, etc.)..."
                   className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white 
                            placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
                 />
               </div>
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
               
               <button
                 onClick={handleBuild}
@@ -147,15 +162,25 @@ ${funnel.exportFormat}
               <h3 className="text-2xl font-bold text-white mb-4">
                 🚀 Complete Funnel for {funnel.accountHandle}
               </h3>
-              <button
-                onClick={handleDownload}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={handleDownload}
+                  className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
                          rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
-                         flex items-center space-x-2 mx-auto"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download Complete Funnel</span>
-              </button>
+                         flex items-center space-x-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Complete Funnel</span>
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600
+                         transition-all duration-300 flex items-center space-x-2"
+                >
+                  <Funnel className="w-4 h-4" />
+                  <span>Create Another Funnel</span>
+                </button>
+              </div>
             </div>
 
             {/* Lead Magnet & Monetization */}
