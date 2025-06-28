@@ -96,7 +96,7 @@ ${funnel.exportFormat}
           <div className="max-w-2xl mx-auto">
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8">
               <div>
-                <label className="text-white font-medium mb-2 block">Social Media Handle</label>
+                <label className="text-white font-medium mb-2 block">Social Media Handle or Content Niche</label>
                 <input
                   type="text"
                   value={accountHandle}
