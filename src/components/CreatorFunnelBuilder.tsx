@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Fuel as Funnel, Loader2, Lock, Copy, Download, FileText, Mail, DollarSign } from 'lucide-react';
+import { Fuel as Funnel, Loader2, Lock, Copy, Download, Mail, DollarSign } from 'lucide-react';
 import { buildCreatorFunnel } from '../services/moreFeatures';
 import { CreatorFunnelBuilder as CreatorFunnelBuilderType } from '../types/moreFeatures';
 
@@ -26,6 +26,22 @@ const CreatorFunnelBuilder: React.FC<CreatorFunnelBuilderProps> = ({ onUpgradeCl
     setError(null);
     try {
       const result = await buildCreatorFunnel(accountHandle);
+      console.log("buildCreatorFunnel raw result:", result);
+      
+      // Validate that we have the expected fields
+      if (!result || 
+          typeof result.accountHandle !== 'string' || 
+          typeof result.leadMagnetIdea !== 'string' || 
+          !Array.isArray(result.emailSequence) || 
+          typeof result.monetizationApproach !== 'string' ||
+          !result.landingPage || 
+          typeof result.landingPage.headline !== 'string' ||
+          typeof result.landingPage.socialProof !== 'string' ||
+          typeof result.landingPage.cta !== 'string' ||
+          !Array.isArray(result.landingPage.faqs)) {
+        throw new Error('Invalid response format from API');
+      }
+      
       setFunnel(result);
     } catch (error) {
       console.error('Error building creator funnel:', error);
@@ -187,7 +203,7 @@ ${funnel.exportFormat}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <FileText className="w-6 h-6 text-blue-400" />
+                  <Mail className="w-6 h-6 text-blue-400" />
                   <h4 className="text-blue-400 font-bold text-lg">Lead Magnet Idea</h4>
                 </div>
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">

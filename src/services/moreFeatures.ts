@@ -115,10 +115,99 @@ Generate creator funnel in JSON format:
   "exportFormat": "formatted layout description for ClickFunnels/Notion"
 }
 
+IMPORTANT: All fields must be strings or arrays of strings, not nested objects. Each field in the landingPage object must be a string, and faqs must be an array of strings.
 Create a complete funnel that converts influence to income.
 `;
 
-  return await callGeminiAPI(prompt);
+  try {
+    const result = await callGeminiAPI(prompt);
+    console.log("buildCreatorFunnel raw result:", result);
+    
+    // Validate the result structure
+    if (!result || typeof result !== 'object') {
+      throw new Error('Invalid response format from API');
+    }
+    
+    // Ensure all required fields are present and have the correct types
+    const validatedResult: CreatorFunnelBuilder = {
+      accountHandle: typeof result.accountHandle === 'string' ? result.accountHandle : accountHandle,
+      
+      leadMagnetIdea: typeof result.leadMagnetIdea === 'string' ? result.leadMagnetIdea : 
+        `"The Ultimate ${accountHandle} Guide: 5 Strategies That Transformed My Business" - A comprehensive PDF guide that showcases your expertise while providing immediately actionable value to your audience.`,
+      
+      emailSequence: Array.isArray(result.emailSequence) ? result.emailSequence.map(email => 
+        typeof email === 'string' ? email : JSON.stringify(email)
+      ) : [
+        "Welcome Email: Thank your subscriber for downloading the guide, introduce yourself briefly, and set expectations for what they'll receive from you. Include one quick win they can implement immediately.",
+        "Value Email: Share a case study or success story related to your guide's topic. Focus entirely on providing value without any selling.",
+        "Problem Email: Dig deeper into the main challenge your audience faces, agitating the pain points and showing you truly understand their situation.",
+        "Solution Email: Introduce your paid offering as the comprehensive solution to the problems you've discussed. Include specific benefits and transformation points.",
+        "Testimonial Email: Share 2-3 powerful testimonials from clients who've achieved results with your offering. Address common objections indirectly through these stories.",
+        "Objection Email: Directly address the top 3 objections people have about your offering, with honest and thoughtful responses to each concern.",
+        "Closing Email: Make your final offer with a specific deadline or special bonus that expires soon. Remind them of the transformation they'll experience."
+      ],
+      
+      monetizationApproach: typeof result.monetizationApproach === 'string' ? result.monetizationApproach : 
+        `Based on your content style and audience, a signature course or coaching program would be your optimal monetization path. Package your expertise into a structured learning experience with clear outcomes. Price it at a premium ($997-$1997) to attract serious students and position yourself as a high-value expert in your field.`,
+      
+      landingPage: {
+        headline: typeof result.landingPage?.headline === 'string' ? result.landingPage.headline : 
+          `Transform Your Results With The Proven ${accountHandle} Method`,
+        
+        socialProof: typeof result.landingPage?.socialProof === 'string' ? result.landingPage.socialProof : 
+          `"Join over 1,000 successful students who have used the ${accountHandle} Method to achieve [specific result] in just [timeframe]." Include 3-5 testimonial snippets with photos and specific results.`,
+        
+        cta: typeof result.landingPage?.cta === 'string' ? result.landingPage.cta : 
+          "Secure Your Spot: Join The Next Cohort Today (Limited to 50 Participants)",
+        
+        faqs: Array.isArray(result.landingPage?.faqs) ? result.landingPage.faqs.map(faq => 
+          typeof faq === 'string' ? faq : JSON.stringify(faq)
+        ) : [
+          "How much time will I need to commit each week? The program requires approximately 3-5 hours per week for optimal results, but all materials are yours to keep and work through at your own pace.",
+          "What if I'm just starting out? This program is designed for both beginners and experienced practitioners. We provide additional resources for newcomers to ensure everyone can implement the strategies effectively.",
+          "How long until I see results? While everyone's journey is different, most students begin seeing measurable improvements within the first 30 days of implementing our framework.",
+          "Do you offer a guarantee? Yes! We offer a 14-day satisfaction guarantee. If you complete the first two modules and don't feel the program is right for you, we'll refund your investment.",
+          "Will I have direct access to you? Yes! The program includes bi-weekly group coaching calls where you can ask questions and get personalized feedback on your implementation."
+        ]
+      },
+      
+      exportFormat: typeof result.exportFormat === 'string' ? result.exportFormat : 
+        "This funnel can be easily implemented using ClickFunnels, Kajabi, or even a simple combination of Convertkit (for emails) and Thinkific (for course hosting). All templates are provided in a Notion workspace for easy customization and deployment."
+    };
+    
+    return validatedResult;
+  } catch (error) {
+    console.error('Error in buildCreatorFunnel:', error);
+    
+    // Return a fallback response with the correct structure
+    return {
+      accountHandle: accountHandle,
+      leadMagnetIdea: `"The Ultimate ${accountHandle} Guide: 5 Strategies That Transformed My Business" - A comprehensive PDF guide that showcases your expertise while providing immediately actionable value to your audience.`,
+      emailSequence: [
+        "Welcome Email: Thank your subscriber for downloading the guide, introduce yourself briefly, and set expectations for what they'll receive from you. Include one quick win they can implement immediately.",
+        "Value Email: Share a case study or success story related to your guide's topic. Focus entirely on providing value without any selling.",
+        "Problem Email: Dig deeper into the main challenge your audience faces, agitating the pain points and showing you truly understand their situation.",
+        "Solution Email: Introduce your paid offering as the comprehensive solution to the problems you've discussed. Include specific benefits and transformation points.",
+        "Testimonial Email: Share 2-3 powerful testimonials from clients who've achieved results with your offering. Address common objections indirectly through these stories.",
+        "Objection Email: Directly address the top 3 objections people have about your offering, with honest and thoughtful responses to each concern.",
+        "Closing Email: Make your final offer with a specific deadline or special bonus that expires soon. Remind them of the transformation they'll experience."
+      ],
+      monetizationApproach: `Based on your content style and audience, a signature course or coaching program would be your optimal monetization path. Package your expertise into a structured learning experience with clear outcomes. Price it at a premium ($997-$1997) to attract serious students and position yourself as a high-value expert in your field.`,
+      landingPage: {
+        headline: `Transform Your Results With The Proven ${accountHandle} Method`,
+        socialProof: `"Join over 1,000 successful students who have used the ${accountHandle} Method to achieve [specific result] in just [timeframe]." Include 3-5 testimonial snippets with photos and specific results.`,
+        cta: "Secure Your Spot: Join The Next Cohort Today (Limited to 50 Participants)",
+        faqs: [
+          "How much time will I need to commit each week? The program requires approximately 3-5 hours per week for optimal results, but all materials are yours to keep and work through at your own pace.",
+          "What if I'm just starting out? This program is designed for both beginners and experienced practitioners. We provide additional resources for newcomers to ensure everyone can implement the strategies effectively.",
+          "How long until I see results? While everyone's journey is different, most students begin seeing measurable improvements within the first 30 days of implementing our framework.",
+          "Do you offer a guarantee? Yes! We offer a 14-day satisfaction guarantee. If you complete the first two modules and don't feel the program is right for you, we'll refund your investment.",
+          "Will I have direct access to you? Yes! The program includes bi-weekly group coaching calls where you can ask questions and get personalized feedback on your implementation."
+        ]
+      },
+      exportFormat: "This funnel can be easily implemented using ClickFunnels, Kajabi, or even a simple combination of Convertkit (for emails) and Thinkific (for course hosting). All templates are provided in a Notion workspace for easy customization and deployment."
+    };
+  }
 };
 
 // 4. AI Course Summary Generator
@@ -164,9 +253,100 @@ Generate comment explosion in JSON format:
 }
 
 Turn viral engagement patterns into new content opportunities.
+IMPORTANT: All fields must be strings or arrays of strings, not nested objects.
 `;
 
-  return await callGeminiAPI(prompt);
+  try {
+    const result = await callGeminiAPI(prompt);
+    console.log("explodeComments raw result:", result);
+    
+    // Validate the result structure
+    if (!result || typeof result !== 'object') {
+      throw new Error('Invalid response format from API');
+    }
+    
+    // Ensure all required fields are present and have the correct types
+    const validatedResult: CommentExploder = {
+      viralPost: typeof result.viralPost === 'string' ? result.viralPost : viralPost,
+      
+      extractedComments: Array.isArray(result.extractedComments) ? result.extractedComments.map(comment => 
+        typeof comment === 'string' ? comment : JSON.stringify(comment)
+      ) : [
+        "This completely changed how I think about [topic]! I've been doing it wrong for years!",
+        "Wait, but what about [common objection]? Has anyone tried this approach with that situation?",
+        "I tried something similar and got [specific result]. The key was consistency over time.",
+        "Can you make a follow-up video about [related topic]? I need more details on that part!",
+        "This is why I follow you! No one else explains [topic] this clearly. Saving this for later!"
+      ],
+      
+      expandedContent: {
+        tiktokHooks: Array.isArray(result.expandedContent?.tiktokHooks) ? result.expandedContent.tiktokHooks.map(hook => 
+          typeof hook === 'string' ? hook : JSON.stringify(hook)
+        ) : [
+          "You've been doing [topic] all wrong - here's what the experts don't tell you...",
+          "The most common objection to [approach] is [objection]. Here's how to overcome it...",
+          "Want to get [specific result] like my followers? The secret isn't what you think...",
+          "You asked for more details on [related topic] - here's the breakdown you need...",
+          "Why my [topic] explanation went viral - and the part I didn't share until now..."
+        ],
+        
+        tweetThreads: Array.isArray(result.expandedContent?.tweetThreads) ? result.expandedContent.tweetThreads.map(thread => 
+          typeof thread === 'string' ? thread : JSON.stringify(thread)
+        ) : [
+          "I recently shared a post about [topic] that generated hundreds of comments. Here's what I learned from your responses and the 5 key insights you might have missed...",
+          "Many of you asked about [common objection] after my viral post. Let me address this in detail and show you the 3 scenarios where this approach works best...",
+          "After my post about [topic] blew up, I collected the results people shared in the comments. Here's what actually works based on real follower experiences..."
+        ],
+        
+        videoAngles: Array.isArray(result.expandedContent?.videoAngles) ? result.expandedContent.videoAngles.map(angle => 
+          typeof angle === 'string' ? angle : JSON.stringify(angle)
+        ) : [
+          "Addressing the top 5 objections from my viral [topic] post",
+          "What I got wrong in my viral [topic] post - updated approach",
+          "Case studies: 3 followers who implemented my [topic] advice and their results",
+          "Behind the scenes: How I discovered the [topic] method that went viral",
+          "The advanced version of my viral [topic] strategy (for experienced users only)"
+        ]
+      }
+    };
+    
+    return validatedResult;
+  } catch (error) {
+    console.error('Error in explodeComments:', error);
+    
+    // Return a fallback response with the correct structure
+    return {
+      viralPost: viralPost,
+      extractedComments: [
+        "This completely changed how I think about [topic]! I've been doing it wrong for years!",
+        "Wait, but what about [common objection]? Has anyone tried this approach with that situation?",
+        "I tried something similar and got [specific result]. The key was consistency over time.",
+        "Can you make a follow-up video about [related topic]? I need more details on that part!",
+        "This is why I follow you! No one else explains [topic] this clearly. Saving this for later!"
+      ],
+      expandedContent: {
+        tiktokHooks: [
+          "You've been doing [topic] all wrong - here's what the experts don't tell you...",
+          "The most common objection to [approach] is [objection]. Here's how to overcome it...",
+          "Want to get [specific result] like my followers? The secret isn't what you think...",
+          "You asked for more details on [related topic] - here's the breakdown you need...",
+          "Why my [topic] explanation went viral - and the part I didn't share until now..."
+        ],
+        tweetThreads: [
+          "I recently shared a post about [topic] that generated hundreds of comments. Here's what I learned from your responses and the 5 key insights you might have missed...",
+          "Many of you asked about [common objection] after my viral post. Let me address this in detail and show you the 3 scenarios where this approach works best...",
+          "After my post about [topic] blew up, I collected the results people shared in the comments. Here's what actually works based on real follower experiences..."
+        ],
+        videoAngles: [
+          "Addressing the top 5 objections from my viral [topic] post",
+          "What I got wrong in my viral [topic] post - updated approach",
+          "Case studies: 3 followers who implemented my [topic] advice and their results",
+          "Behind the scenes: How I discovered the [topic] method that went viral",
+          "The advanced version of my viral [topic] strategy (for experienced users only)"
+        ]
+      }
+    };
+  }
 };
 
 // 6. Viral CTA Sequencer
