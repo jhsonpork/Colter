@@ -117,27 +117,48 @@ User's Niche: "${userNiche}"
 Generate adaptations in JSON format:
 {
   "originalTrend": "${trendTopic}",
+  "niche": "${userNiche}",
   "tweetVersion": "Twitter post that connects the trend to the niche (max 280 chars)",
   "scriptVersion": "30-second TikTok/Reel script connecting trend to niche",
-  "adVersion": "Facebook ad that leverages the trend for the niche",
-  "niche": "${userNiche}"
+  "adVersion": "Facebook ad that leverages the trend for the niche"
 }
 
 Make it natural, relevant, and engaging while staying true to both the trend and the niche.
+IMPORTANT: All fields must be strings, not objects.
 `;
 
   try {
-    return await callGeminiAPI(prompt);
+    const result = await callGeminiAPI(prompt);
+    console.log("rewriteTrend raw result:", result);
+    
+    // Validate the result structure
+    if (!result || typeof result !== 'object') {
+      throw new Error('Invalid response format from API');
+    }
+    
+    // Ensure all required fields are strings
+    const validatedResult: TrendRewrite = {
+      originalTrend: typeof result.originalTrend === 'string' ? result.originalTrend : trendTopic,
+      niche: typeof result.niche === 'string' ? result.niche : userNiche,
+      tweetVersion: typeof result.tweetVersion === 'string' ? result.tweetVersion : 
+        `Just saw the latest on ${trendTopic} and immediately thought how this applies to ${userNiche}. #${userNiche.replace(/\s+/g, '')}`,
+      scriptVersion: typeof result.scriptVersion === 'string' ? result.scriptVersion : 
+        `[Opening]\nHave you seen the trending topic about ${trendTopic}? Everyone's talking about it, and here's why it matters for ${userNiche}.`,
+      adVersion: typeof result.adVersion === 'string' ? result.adVersion : 
+        `[${userNiche.toUpperCase()} ALERT] The ${trendTopic} trend is reshaping our industry!`
+    };
+    
+    return validatedResult;
   } catch (error) {
     console.error('Error in rewriteTrend:', error);
     
-    // Return a mock response if the API call fails
+    // Return a fallback response with the correct structure
     return {
       originalTrend: trendTopic,
+      niche: userNiche,
       tweetVersion: `Just saw the latest on ${trendTopic} and immediately thought how this applies to ${userNiche}. Here's how you can leverage this trend to grow your business... #${userNiche.replace(/\s+/g, '')} #${trendTopic.replace(/\s+/g, '')}`,
       scriptVersion: `[Opening]\nHave you seen the trending topic about ${trendTopic}? Everyone's talking about it, and here's why it matters for ${userNiche}.\n\n[Middle]\nThis trend is changing how people think about ${userNiche}, and smart businesses are already adapting.\n\n[Closing]\nHere's how you can apply this trend to your ${userNiche} business before your competitors do!`,
-      adVersion: `[${userNiche.toUpperCase()} ALERT] The ${trendTopic} trend is reshaping our industry! Learn how forward-thinking ${userNiche} businesses are leveraging this trend to gain market share. Click now before your competitors beat you to it!`,
-      niche: userNiche
+      adVersion: `[${userNiche.toUpperCase()} ALERT] The ${trendTopic} trend is reshaping our industry! Learn how forward-thinking ${userNiche} businesses are leveraging this trend to gain market share. Click now before your competitors beat you to it!`
     };
   }
 };
