@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import UserMenu from './UserMenu';
-import AuthModal from './auth/AuthModal';
 import UserProfileModal from './auth/UserProfileModal';
 import SubscriptionStatus from './SubscriptionStatus';
 import { useSearchParams } from 'react-router-dom';
@@ -15,7 +14,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onUpgradeClick, onAuthClick }) => {
   const { user } = useAuth();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [searchParams] = useSearchParams();
 

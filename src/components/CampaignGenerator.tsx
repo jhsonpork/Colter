@@ -4,17 +4,20 @@ import { generateCampaign } from '../services/gemini';
 import { SavedCampaign, CampaignDay } from '../types/ad';
 import ToneSelector from './ToneSelector';
 import { downloadCampaignPackage } from '../utils/download';
+import { useAuth } from '../context/AuthContext';
 
 interface CampaignGeneratorProps {
   onCampaignGenerated: (campaign: SavedCampaign) => void;
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
+  onAuthRequired: () => void;
 }
 
 const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   onCampaignGenerated,
   onUpgradeClick,
   hasUsedFreeTrial,
+  onAuthRequired
 }) => {
   const [businessDescription, setBusinessDescription] = useState('');
   const [selectedTone, setSelectedTone] = useState('professional');
@@ -22,9 +25,16 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [campaignDays, setCampaignDays] = useState<CampaignDay[] | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const { user } = useAuth();
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
+
+    // Check if user is logged in
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
 
     if (hasUsedFreeTrial) {
       onUpgradeClick();

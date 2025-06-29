@@ -2,20 +2,29 @@ import React, { useState } from 'react';
 import { RefreshCw, Loader2, Lock, Copy, ArrowRight } from 'lucide-react';
 import { rewriteAd } from '../services/gemini';
 import ToneSelector from './ToneSelector';
+import { useAuth } from '../context/AuthContext';
 
 interface AdRewriterProps {
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
+  onAuthRequired: () => void;
 }
 
-const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTrial }) => {
+const AdRewriter: React.FC<AdRewriterProps> = ({ onUpgradeClick, hasUsedFreeTrial, onAuthRequired }) => {
   const [originalAd, setOriginalAd] = useState('');
   const [rewrittenAd, setRewrittenAd] = useState('');
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isRewriting, setIsRewriting] = useState(false);
+  const { user } = useAuth();
 
   const handleRewrite = async () => {
     if (!originalAd.trim()) return;
+    
+    // Check if user is logged in
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
     
     if (hasUsedFreeTrial) {
       onUpgradeClick();

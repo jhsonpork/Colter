@@ -2,19 +2,28 @@ import React, { useState } from 'react';
 import { Shuffle, Loader2, Lock, Copy, Zap, MessageSquare, MousePointer } from 'lucide-react';
 import { generateAdVariations } from '../services/analysis';
 import { AdVariation } from '../types/analysis';
+import { useAuth } from '../context/AuthContext';
 
 interface ABVariationGeneratorProps {
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
+  onAuthRequired: () => void;
 }
 
-const ABVariationGenerator: React.FC<ABVariationGeneratorProps> = ({ onUpgradeClick, hasUsedFreeTrial }) => {
+const ABVariationGenerator: React.FC<ABVariationGeneratorProps> = ({ onUpgradeClick, hasUsedFreeTrial, onAuthRequired }) => {
   const [originalAd, setOriginalAd] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [variations, setVariations] = useState<AdVariation | null>(null);
+  const { user } = useAuth();
 
   const handleGenerate = async () => {
     if (!originalAd.trim()) return;
+    
+    // Check if user is logged in
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
     
     if (hasUsedFreeTrial) {
       onUpgradeClick();
