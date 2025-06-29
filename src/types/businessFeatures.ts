@@ -1,3 +1,27 @@
+import { 
+  ContractClauseNegotiation,
+  RegulationGapScan,
+  MonetizationMultiplierResult,
+  CrisisCommsResult,
+  AcquisitionLanguageResult,
+  ChurnAutopsyResult,
+  GlobalPayrollResult,
+  IPStrategyResult,
+  BoardMeetingResult,
+  ExitMultiplierResult,
+  // New Blue Features
+  IdeaToCompanyResult,
+  GhostwriterResult,
+  DecisionClarityResult,
+  BreakpointFixerResult,
+  HyperPersonaResult,
+  PerfectPricingResult,
+  AudienceTriggerResult,
+  StartupStrategyResult,
+  MiniSaaSResult,
+  DistributionStackResult
+} from '../types/businessFeatures';
+
 // Types for the 10 new business features
 
 export interface ContractClauseNegotiation {
