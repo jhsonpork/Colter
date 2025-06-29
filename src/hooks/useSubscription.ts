@@ -28,6 +28,19 @@ export function useSubscription() {
         setLoading(true);
         setError(null);
 
+        // Special case for admin account
+        if (user.email === 'nafismahim123@gmail.com' || user.email?.includes('nafismahim123')) {
+          setSubscription({
+            subscription_status: 'active',
+            price_id: 'price_1RYfLQACZYrdFwrXSy38VoEl',
+            current_period_end: Math.floor(Date.now() / 1000) + 31536000, // 1 year from now
+            payment_method_last4: null,
+            payment_method_brand: null
+          });
+          setLoading(false);
+          return;
+        }
+
         const { data, error: fetchError } = await supabase
           .from('stripe_user_subscriptions')
           .select('*')

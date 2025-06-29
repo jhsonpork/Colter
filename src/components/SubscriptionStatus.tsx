@@ -1,53 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Crown, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useSubscription } from '../hooks/useSubscription';
 import toast from 'react-hot-toast';
 
 interface SubscriptionStatusProps {
   onUpgradeClick: () => void;
 }
 
-interface Subscription {
-  subscription_status: string;
-  price_id: string | null;
-  current_period_end: number | null;
-}
-
 const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick }) => {
   const { user } = useAuth();
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSubscription = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('stripe_user_subscriptions')
-          .select('*')
-          .maybeSingle();
-
-        if (error) {
-          console.error('Error fetching subscription:', error);
-          toast.error('Failed to load subscription status');
-        } else {
-          setSubscription(data);
-        }
-      } catch (error) {
-        console.error('Error in subscription fetch:', error);
-        toast.error('Failed to load subscription status');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubscription();
-  }, [user]);
+  const { subscription, isSubscribed, loading } = useSubscription();
 
   if (loading) {
     return (
@@ -58,9 +21,7 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onUpgradeClick 
     );
   }
 
-  const isActive = subscription?.subscription_status === 'active';
-
-  if (isActive) {
+  if (isSubscribed) {
     return (
       <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-400/20 to-amber-500/20 border border-yellow-400/30">
         <Crown className="w-4 h-4 text-yellow-400" />

@@ -100,6 +100,7 @@ import { AuthProvider } from './context/AuthContext';
 import AuthPage from './components/auth/AuthPage';
 import ResetPasswordForm from './components/auth/ResetPasswordForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ProtectedFeature from './components/ProtectedFeature';
 import { supabase } from './lib/supabase';
 import SuccessPage from './components/SuccessPage';
 
@@ -130,6 +131,36 @@ function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [hasUsedFreeTrial, setHasUsedFreeTrial] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState<SavedCampaign[]>([]);
+
+  // Define which features require Pro subscription
+  const proFeatures: ActivePage[] = [
+    // Advanced Features
+    'emotion-mapper', 'controversial', 'flip-script', 'persona-cta', 'before-after', 
+    'metaphor', 'comment-bait', 'ad-blocks', 'pain-extractor', 'offer-optimizer', 
+    'script-skit', 'storyboard',
+    
+    // Premium Features
+    'ad-explainer', 'modular-assembler', 'goal-matcher', 'deviralizer', 'first-3-seconds', 
+    'cta-personalizer', 'psych-test', 'visual-builder', 'style-roulette', 'magnet-breakdown', 
+    'performance-predictor', 'memory-test',
+    
+    // More Features
+    'offer-angle-matcher', 'hook-frame-tester', 'creator-funnel-builder', 'course-summary-generator',
+    'comment-exploder', 'viral-cta-sequencer', 'platform-timing-forecaster', 'content-ethics-sanitizer',
+    'value-ladder-builder', 'monetization-generator', 'content-framework-builder', 'course-curriculum-builder',
+    
+    // Additional Features
+    'startup-engine', 'content-calendar', 'prompt-debugger', 'agency-automator', 'product-launch',
+    'failure-analyzer', 'income-streams', 'infographic-wizard', 'digital-product', 'collab-connector',
+    
+    // Business Features
+    'contract-negotiator', 'regulation-scanner', 'monetization-multiplier', 'crisis-comms', 'acquisition-translator',
+    'churn-autopsy', 'global-payroll', 'ip-strategy', 'board-meeting', 'exit-multiplier',
+    
+    // Blue Features
+    'idea-to-company', 'auto-ghostwriter', 'decision-clarity', 'breakpoint-fixer', 'hyperpersona',
+    'perfect-pricing', 'audience-trigger', 'startup-strategy', 'mini-saas', 'distribution-stack'
+  ];
 
   // Load saved campaigns from localStorage or Supabase if logged in
   useEffect(() => {
@@ -404,470 +435,602 @@ function App() {
 
           {/* ALL 12 ADVANCED FEATURES - FULLY FUNCTIONAL */}
           {activePage === 'pain-extractor' && (
-            <PainPointExtractor 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PainPointExtractor 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'offer-optimizer' && (
-            <OfferOptimizer 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <OfferOptimizer 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'script-skit' && (
-            <ScriptToSkitConverter 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ScriptToSkitConverter 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'storyboard' && (
-            <StoryboardBuilder 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <StoryboardBuilder 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'emotion-mapper' && (
-            <EmotionalTriggerMapper 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <EmotionalTriggerMapper 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'controversial' && (
-            <ControversialTakeGenerator 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ControversialTakeGenerator 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'flip-script' && (
-            <FlipScriptReverser 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <FlipScriptReverser 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'persona-cta' && (
-            <PersonaCTAGenerator 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PersonaCTAGenerator 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'before-after' && (
-            <BeforeAfterAdGenerator 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <BeforeAfterAdGenerator 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'metaphor' && (
-            <MetaphorMagicTool 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <MetaphorMagicTool 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'comment-bait' && (
-            <CommentBaitGenerator 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CommentBaitGenerator 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'ad-blocks' && (
-            <AdBuildingBlockAssembler 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AdBuildingBlockAssembler 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {/* NEW FINAL 12 FEATURES - ALL FULLY FUNCTIONAL */}
           {activePage === 'ad-explainer' && (
-            <AdVersionExplainer 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AdVersionExplainer 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'modular-assembler' && (
-            <ModularAdAssembler 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ModularAdAssembler 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'goal-matcher' && (
-            <AdGoalMatcher 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AdGoalMatcher 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'deviralizer' && (
-            <Deviralizer 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <Deviralizer 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'first-3-seconds' && (
-            <FirstThreeSecondsOptimizer 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <FirstThreeSecondsOptimizer 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'cta-personalizer' && (
-            <CTAPersonalizer 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CTAPersonalizer 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'psych-test' && (
-            <PsychTestForCopy 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PsychTestForCopy 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'visual-builder' && (
-            <VisualAdBuilder 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <VisualAdBuilder 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'style-roulette' && (
-            <AdStyleRoulette 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AdStyleRoulette 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'magnet-breakdown' && (
-            <AdMagnetBreakdown 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AdMagnetBreakdown 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'performance-predictor' && (
-            <ViralPerformancePredictor 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ViralPerformancePredictor 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'memory-test' && (
-            <HookMemoryTest 
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <HookMemoryTest 
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {/* MORE FEATURES (12 NEW) - ALL FULLY FUNCTIONAL */}
           {activePage === 'offer-angle-matcher' && (
-            <OfferAngleMatcher
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <OfferAngleMatcher
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'hook-frame-tester' && (
-            <HookFrameTester
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <HookFrameTester
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'creator-funnel-builder' && (
-            <CreatorFunnelBuilder
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CreatorFunnelBuilder
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'course-summary-generator' && (
-            <CourseSummaryGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CourseSummaryGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'comment-exploder' && (
-            <CommentExploder
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CommentExploder
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'viral-cta-sequencer' && (
-            <ViralCTASequencer
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ViralCTASequencer
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'platform-timing-forecaster' && (
-            <PlatformTimingForecaster
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PlatformTimingForecaster
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'content-ethics-sanitizer' && (
-            <ContentEthicsSanitizer
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ContentEthicsSanitizer
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'value-ladder-builder' && (
-            <ValueLadderBuilder
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ValueLadderBuilder
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'monetization-generator' && (
-            <MonetizationGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <MonetizationGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'content-framework-builder' && (
-            <ContentFrameworkBuilder
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ContentFrameworkBuilder
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'course-curriculum-builder' && (
-            <CourseCurriculumBuilder
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CourseCurriculumBuilder
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {/* 10 NEW ADDITIONAL FEATURES - ALL FULLY FUNCTIONAL */}
           {activePage === 'startup-engine' && (
-            <ZeroToStartupEngine
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ZeroToStartupEngine
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'content-calendar' && (
-            <ContentCalendarGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ContentCalendarGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'prompt-debugger' && (
-            <PromptDebugger
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PromptDebugger
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'agency-automator' && (
-            <OnePersonAgencyAutomator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <OnePersonAgencyAutomator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'product-launch' && (
-            <ProductLaunchFlow
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ProductLaunchFlow
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'failure-analyzer' && (
-            <FailureAnalyzer
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <FailureAnalyzer
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'income-streams' && (
-            <IncomeStreamGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <IncomeStreamGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'infographic-wizard' && (
-            <InfographicWizard
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <InfographicWizard
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'digital-product' && (
-            <DigitalProductGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <DigitalProductGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'collab-connector' && (
-            <CreatorCollabConnector
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CreatorCollabConnector
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {/* 10 NEW BUSINESS FEATURES - ALL FULLY FUNCTIONAL */}
           {activePage === 'contract-negotiator' && (
-            <ContractClauseNegotiator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ContractClauseNegotiator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'regulation-scanner' && (
-            <RegulationGapScanner
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <RegulationGapScanner
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'monetization-multiplier' && (
-            <MonetizationMultiplier
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <MonetizationMultiplier
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'crisis-comms' && (
-            <CrisisCommsGenerator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <CrisisCommsGenerator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'acquisition-translator' && (
-            <AcquisitionLanguageTranslator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AcquisitionLanguageTranslator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'churn-autopsy' && (
-            <ChurnAutopsyReport
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ChurnAutopsyReport
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'global-payroll' && (
-            <GlobalPayrollArchitect
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <GlobalPayrollArchitect
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'ip-strategy' && (
-            <IPStrategySimulator
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <IPStrategySimulator
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'board-meeting' && (
-            <BoardMeetingAlchemist
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <BoardMeetingAlchemist
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'exit-multiplier' && (
-            <ExitMultiplierEngine
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <ExitMultiplierEngine
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {/* NEW BLUE FEATURES - ALL FULLY FUNCTIONAL */}
           {activePage === 'idea-to-company' && (
-            <IdeaToCompany
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <IdeaToCompany
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'auto-ghostwriter' && (
-            <AutoGhostwriter
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AutoGhostwriter
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'decision-clarity' && (
-            <DecisionClarity
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <DecisionClarity
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'breakpoint-fixer' && (
-            <BreakpointFixer
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <BreakpointFixer
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'hyperpersona' && (
-            <HyperPersona
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <HyperPersona
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'perfect-pricing' && (
-            <PerfectPricing
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <PerfectPricing
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'audience-trigger' && (
-            <AudienceTrigger
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <AudienceTrigger
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'startup-strategy' && (
-            <StartupStrategy
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <StartupStrategy
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'mini-saas' && (
-            <MiniSaaS
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <MiniSaaS
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
 
           {activePage === 'distribution-stack' && (
-            <DistributionStack
-              onUpgradeClick={handleUpgradeClick}
-              hasUsedFreeTrial={hasUsedFreeTrial}
-            />
+            <ProtectedFeature onUpgradeClick={handleUpgradeClick}>
+              <DistributionStack
+                onUpgradeClick={handleUpgradeClick}
+                hasUsedFreeTrial={hasUsedFreeTrial}
+              />
+            </ProtectedFeature>
           )}
           
           {activePage === 'saved' && (
