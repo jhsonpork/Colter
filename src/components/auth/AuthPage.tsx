@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
@@ -11,6 +11,18 @@ type AuthView = 'signIn' | 'signUp' | 'forgotPassword';
 const AuthPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<AuthView>('signIn');
   const { user, loading } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Get the previous location from state, or default to home
+  const from = location.state?.from?.pathname || '/';
+
+  useEffect(() => {
+    if (user && !loading) {
+      // Redirect back to the page they were trying to access
+      navigate(from, { replace: true });
+    }
+  }, [user, loading, navigate, from]);
 
   if (loading) {
     return (
@@ -20,10 +32,6 @@ const AuthPage: React.FC = () => {
         </div>
       </div>
     );
-  }
-
-  if (user) {
-    return <Navigate to="/" replace />;
   }
 
   return (

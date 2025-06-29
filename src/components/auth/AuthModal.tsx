@@ -10,12 +10,14 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultView?: AuthView;
+  redirectPath?: string;
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ 
   isOpen, 
   onClose,
-  defaultView = 'signIn'
+  defaultView = 'signIn',
+  redirectPath = '/'
 }) => {
   const [currentView, setCurrentView] = useState<AuthView>(defaultView);
 
@@ -36,6 +38,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             onSuccess={onClose}
             onSignUpClick={() => setCurrentView('signUp')}
             onForgotPasswordClick={() => setCurrentView('forgotPassword')}
+            redirectPath={redirectPath}
           />
         )}
         
@@ -43,6 +46,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           <SignUpForm 
             onSuccess={() => setCurrentView('signIn')}
             onSignInClick={() => setCurrentView('signIn')}
+            redirectPath={redirectPath}
           />
         )}
         

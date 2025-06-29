@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -7,17 +8,20 @@ interface SignInFormProps {
   onSuccess?: () => void;
   onSignUpClick: () => void;
   onForgotPasswordClick: () => void;
+  redirectPath?: string;
 }
 
 const SignInForm: React.FC<SignInFormProps> = ({ 
   onSuccess, 
   onSignUpClick,
-  onForgotPasswordClick
+  onForgotPasswordClick,
+  redirectPath = '/'
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +41,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
       } else {
         toast.success('Signed in successfully!');
         if (onSuccess) onSuccess();
+        navigate(redirectPath);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');

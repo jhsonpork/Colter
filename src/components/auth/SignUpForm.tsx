@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface SignUpFormProps {
   onSuccess?: () => void;
   onSignInClick: () => void;
+  redirectPath?: string;
 }
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess, onSignInClick }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({ 
+  onSuccess, 
+  onSignInClick,
+  redirectPath = '/'
+}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +45,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess, onSignInClick }) => 
       } else {
         toast.success('Account created! Check your email to confirm your account.');
         if (onSuccess) onSuccess();
+        navigate(redirectPath);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
