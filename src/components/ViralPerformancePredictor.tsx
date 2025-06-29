@@ -52,6 +52,115 @@ const ViralPerformancePredictor: React.FC<ViralPerformancePredictorProps> = ({ o
     return 'text-red-400';
   };
 
+  // Function to render platform-specific metrics based on selected platform
+  const renderPlatformSpecificMetrics = () => {
+    if (!prediction) return null;
+
+    if (platform === 'TikTok' && prediction.platformSpecific.tiktok) {
+      return (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-pink-400 font-semibold mb-2">FYP Potential</h5>
+            <p className={`text-2xl font-bold ${getScoreColor(prediction.platformSpecific.tiktok.fyp)}`}>
+              {prediction.platformSpecific.tiktok.fyp}/10
+            </p>
+          </div>
+          <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-pink-400 font-semibold mb-2">Completion Rate</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.tiktok.completion}</p>
+          </div>
+          <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-pink-400 font-semibold mb-2">Share Rate</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.tiktok.shares}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if ((platform === 'Instagram Reels' || platform === 'Instagram Stories') && prediction.platformSpecific.instagram) {
+      return (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-purple-400 font-semibold mb-2">Explore Potential</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.explore}</p>
+          </div>
+          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-purple-400 font-semibold mb-2">Save Rate</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.saves}</p>
+          </div>
+          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-purple-400 font-semibold mb-2">Story Shares</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.stories}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (platform === 'Facebook Feed' && prediction.platformSpecific.facebook) {
+      return (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-blue-400 font-semibold mb-2">Organic Reach</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.reach}</p>
+          </div>
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-blue-400 font-semibold mb-2">Reaction Rate</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.reactions}</p>
+          </div>
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-blue-400 font-semibold mb-2">Comment Rate</h5>
+            <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.comments}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (platform === 'YouTube Shorts') {
+      return (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-red-400 font-semibold mb-2">Recommendation Potential</h5>
+            <p className="text-white text-lg font-bold">Medium-High</p>
+          </div>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-red-400 font-semibold mb-2">Retention Rate</h5>
+            <p className="text-white text-lg font-bold">65-75%</p>
+          </div>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-red-400 font-semibold mb-2">Subscriber Conversion</h5>
+            <p className="text-white text-lg font-bold">1.2-2.5%</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (platform === 'Twitter/X') {
+      return (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-cyan-400 font-semibold mb-2">Retweet Rate</h5>
+            <p className="text-white text-lg font-bold">1.5-3.2%</p>
+          </div>
+          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-cyan-400 font-semibold mb-2">Like Rate</h5>
+            <p className="text-white text-lg font-bold">3.8-7.5%</p>
+          </div>
+          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-4 text-center">
+            <h5 className="text-cyan-400 font-semibold mb-2">Reply Rate</h5>
+            <p className="text-white text-lg font-bold">0.8-2.1%</p>
+          </div>
+        </div>
+      );
+    }
+    
+    // Default fallback if platform doesn't match or data is missing
+    return (
+      <div className="bg-gray-900/50 rounded-lg p-4 text-center">
+        <p className="text-gray-400">Platform-specific insights not available for {platform}</p>
+      </div>
+    );
+  };
+
   return (
     <section className="px-6 py-12">
       <div className="max-w-6xl mx-auto">
@@ -191,58 +300,7 @@ const ViralPerformancePredictor: React.FC<ViralPerformancePredictorProps> = ({ o
             {/* Platform Specific Metrics */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
               <h4 className="text-yellow-400 font-bold text-lg mb-4">🎯 Platform-Specific Insights</h4>
-              {platform === 'TikTok' && (
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-pink-400 font-semibold mb-2">FYP Potential</h5>
-                    <p className={`text-2xl font-bold ${getScoreColor(prediction.platformSpecific.tiktok.fyp)}`}>
-                      {prediction.platformSpecific.tiktok.fyp}/10
-                    </p>
-                  </div>
-                  <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-pink-400 font-semibold mb-2">Completion Rate</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.tiktok.completion}</p>
-                  </div>
-                  <div className="bg-pink-500/10 border border-pink-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-pink-400 font-semibold mb-2">Share Rate</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.tiktok.shares}</p>
-                  </div>
-                </div>
-              )}
-              
-              {platform === 'Facebook Feed' && (
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-blue-400 font-semibold mb-2">Organic Reach</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.reach}</p>
-                  </div>
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-blue-400 font-semibold mb-2">Reaction Rate</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.reactions}</p>
-                  </div>
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-blue-400 font-semibold mb-2">Comment Rate</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.facebook.comments}</p>
-                  </div>
-                </div>
-              )}
-
-              {(platform === 'Instagram Reels' || platform === 'Instagram Stories') && (
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-purple-400 font-semibold mb-2">Explore Potential</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.explore}</p>
-                  </div>
-                  <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-purple-400 font-semibold mb-2">Save Rate</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.saves}</p>
-                  </div>
-                  <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 text-center">
-                    <h5 className="text-purple-400 font-semibold mb-2">Story Shares</h5>
-                    <p className="text-white text-lg font-bold">{prediction.platformSpecific.instagram.stories}</p>
-                  </div>
-                </div>
-              )}
+              {renderPlatformSpecificMetrics()}
             </div>
 
             {/* Improvement Areas */}

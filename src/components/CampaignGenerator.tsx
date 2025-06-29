@@ -20,8 +20,8 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({
   const [selectedTone, setSelectedTone] = useState('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [campaignDays, setCampaignDays] = useState<CampaignDay[] | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleGenerate = async () => {
     if (!businessDescription.trim()) return;
