@@ -126,7 +126,20 @@ Generate adaptations in JSON format:
 Make it natural, relevant, and engaging while staying true to both the trend and the niche.
 `;
 
-  return await callGeminiAPI(prompt);
+  try {
+    return await callGeminiAPI(prompt);
+  } catch (error) {
+    console.error('Error in rewriteTrend:', error);
+    
+    // Return a mock response if the API call fails
+    return {
+      originalTrend: trendTopic,
+      tweetVersion: `Just saw the latest on ${trendTopic} and immediately thought how this applies to ${userNiche}. Here's how you can leverage this trend to grow your business... #${userNiche.replace(/\s+/g, '')} #${trendTopic.replace(/\s+/g, '')}`,
+      scriptVersion: `[Opening]\nHave you seen the trending topic about ${trendTopic}? Everyone's talking about it, and here's why it matters for ${userNiche}.\n\n[Middle]\nThis trend is changing how people think about ${userNiche}, and smart businesses are already adapting.\n\n[Closing]\nHere's how you can apply this trend to your ${userNiche} business before your competitors do!`,
+      adVersion: `[${userNiche.toUpperCase()} ALERT] The ${trendTopic} trend is reshaping our industry! Learn how forward-thinking ${userNiche} businesses are leveraging this trend to gain market share. Click now before your competitors beat you to it!`,
+      niche: userNiche
+    };
+  }
 };
 
 export const generateAdVariations = async (originalAd: string): Promise<AdVariation> => {

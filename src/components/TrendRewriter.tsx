@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Loader2, Lock, Copy, Hash, Video, Zap } from 'lucide-react';
+import { TrendingUp, Loader2, Lock, Copy, Hash, Video, Zap, RefreshCw } from 'lucide-react';
 import { rewriteTrend } from '../services/analysis';
 import { TrendRewrite } from '../types/analysis';
 
@@ -13,6 +13,7 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
   const [userNiche, setUserNiche] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [rewrite, setRewrite] = useState<TrendRewrite | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!trendTopic.trim() || !userNiche.trim()) return;
@@ -23,11 +24,13 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
     }
 
     setIsGenerating(true);
+    setError(null);
     try {
       const result = await rewriteTrend(trendTopic, userNiche);
       setRewrite(result);
     } catch (error) {
       console.error('Error rewriting trend:', error);
+      setError('There was an error generating your trend rewrite. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -35,6 +38,13 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const handleReset = () => {
+    setTrendTopic('');
+    setUserNiche('');
+    setRewrite(null);
+    setError(null);
   };
 
   const trendExamples = [
@@ -102,6 +112,12 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                   />
                 </div>
               </div>
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
               
               <button
                 onClick={handleGenerate}
@@ -236,6 +252,19 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                   </ul>
                 </div>
               </div>
+            </div>
+
+            {/* Create New Button */}
+            <div className="text-center">
+              <button
+                onClick={handleReset}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
+                         rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
+                         flex items-center space-x-2 mx-auto"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Rewrite Another Trend</span>
+              </button>
             </div>
           </div>
         )}
