@@ -27,6 +27,10 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
     setError(null);
     try {
       const result = await rewriteTrend(trendTopic, userNiche);
+      // Validate structure
+      if (!result || typeof result !== 'object' || !result.tweetVersion) {
+        throw new Error('Unexpected response format from API');
+      }
       setRewrite(result);
     } catch (error) {
       console.error('Error rewriting trend:', error);
@@ -156,9 +160,9 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
           <div className="space-y-8 animate-fade-in">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-white mb-4">
-                Trend Adapted for {rewrite.niche}
+                Trend Adapted for {rewrite.niche || 'your niche'}
               </h3>
-              <p className="text-gray-400">Original: "{rewrite.originalTrend}"</p>
+              <p className="text-gray-400">Original: "{rewrite.originalTrend || trendTopic}"</p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-6">
@@ -170,17 +174,17 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                     <h4 className="text-blue-400 font-bold text-lg">Twitter/X Post</h4>
                   </div>
                   <button
-                    onClick={() => handleCopy(rewrite.tweetVersion)}
+                    onClick={() => handleCopy(rewrite.tweetVersion || '')}
                     className="p-2 text-gray-400 hover:text-white transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="bg-gray-900/50 rounded-lg p-4">
-                  <p className="text-gray-300 text-sm leading-relaxed">{rewrite.tweetVersion}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{rewrite.tweetVersion || 'No data'}</p>
                 </div>
                 <div className="mt-3 text-xs text-gray-500">
-                  {rewrite.tweetVersion.length}/280 characters
+                  {rewrite.tweetVersion ? `${rewrite.tweetVersion.length}/280 characters` : ''}
                 </div>
               </div>
 
@@ -192,14 +196,16 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                     <h4 className="text-pink-400 font-bold text-lg">TikTok/Reel Script</h4>
                   </div>
                   <button
-                    onClick={() => handleCopy(rewrite.scriptVersion)}
+                    onClick={() => handleCopy(rewrite.scriptVersion || '')}
                     className="p-2 text-gray-400 hover:text-white transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="bg-gray-900/50 rounded-lg p-4">
-                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">{rewrite.scriptVersion}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                    {rewrite.scriptVersion || 'No script generated'}
+                  </p>
                 </div>
                 <div className="mt-3 text-xs text-gray-500">
                   ~30 second script
@@ -214,14 +220,14 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
                     <h4 className="text-green-400 font-bold text-lg">Facebook Ad</h4>
                   </div>
                   <button
-                    onClick={() => handleCopy(rewrite.adVersion)}
+                    onClick={() => handleCopy(rewrite.adVersion || '')}
                     className="p-2 text-gray-400 hover:text-white transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="bg-gray-900/50 rounded-lg p-4">
-                  <p className="text-gray-300 text-sm leading-relaxed">{rewrite.adVersion}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{rewrite.adVersion || 'No ad generated'}</p>
                 </div>
                 <div className="mt-3 text-xs text-gray-500">
                   Ready for Meta Ads Manager
@@ -229,32 +235,6 @@ const TrendRewriter: React.FC<TrendRewriterProps> = ({ onUpgradeClick, hasUsedFr
               </div>
             </div>
 
-            {/* Usage Tips */}
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-              <h4 className="text-yellow-400 font-bold text-lg mb-4">🎯 Trendjacking Tips</h4>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h5 className="text-white font-semibold mb-2">Best Practices</h5>
-                  <ul className="text-gray-300 text-sm space-y-1">
-                    <li>• Post within 24-48 hours of trend peak</li>
-                    <li>• Add your unique perspective or twist</li>
-                    <li>• Use relevant hashtags for discoverability</li>
-                    <li>• Engage with comments quickly</li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 className="text-white font-semibold mb-2">Timing Strategy</h5>
-                  <ul className="text-gray-300 text-sm space-y-1">
-                    <li>• Twitter: Post immediately while trending</li>
-                    <li>• TikTok: Create video within 2-3 days</li>
-                    <li>• Facebook: Run ad when trend is still relevant</li>
-                    <li>• Monitor trend lifecycle for optimal timing</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Create New Button */}
             <div className="text-center">
               <button
                 onClick={handleReset}
