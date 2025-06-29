@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Video, Loader2, Lock, Copy, Hash, TrendingUp, Music } from 'lucide-react';
+import { Video, Loader2, Lock, Send, Copy, Download, TrendingUp, Music, RefreshCw } from 'lucide-react';
 import { generateSocialContent, getMockTrendingAudio } from '../services/social';
 import { SocialContentResult } from '../types/social';
 
@@ -14,6 +14,7 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
   const [contentType, setContentType] = useState('viral');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<SocialContentResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const platforms = [
     { id: 'tiktok', label: 'TikTok', emoji: '🎵' },
@@ -38,11 +39,24 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
     }
 
     setIsGenerating(true);
+    setError(null);
     try {
       const result = await generateSocialContent(businessDescription, platform, contentType);
+      console.log("generateSocialContent raw result:", result);
+      
+      // Validate that we have the expected fields
+      if (!result || 
+          typeof result.hook !== 'string' || 
+          typeof result.script !== 'string' || 
+          !Array.isArray(result.hashtags) || 
+          !Array.isArray(result.captions)) {
+        throw new Error('Invalid response format from API');
+      }
+      
       setGeneratedContent(result);
     } catch (error) {
       console.error('Error generating social content:', error);
+      setError('There was an error generating your social content. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -50,6 +64,12 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const handleReset = () => {
+    setBusinessDescription('');
+    setGeneratedContent(null);
+    setError(null);
   };
 
   const trendingAudio = getMockTrendingAudio();
@@ -122,6 +142,12 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
                 />
               </div>
               
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+              
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || !businessDescription.trim()}
@@ -157,6 +183,31 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
           </div>
         ) : (
           <div className="space-y-8 animate-fade-in">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Your {generatedContent.platform} Content is Ready!
+              </h3>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => handleCopy(`${generatedContent.hook}\n\n${generatedContent.script}\n\nHashtags: ${generatedContent.hashtags.join(' ')}\n\nCaptions:\n${generatedContent.captions.join('\n')}`)}
+                  className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold 
+                         rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 
+                         flex items-center space-x-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span>Copy All Content</span>
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600
+                         transition-all duration-300 flex items-center space-x-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Create New Content</span>
+                </button>
+              </div>
+            </div>
+
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Generated Content */}
               <div className="space-y-6">
@@ -305,6 +356,17 @@ const SocialBlitzGenerator: React.FC<SocialBlitzGeneratorProps> = ({ onUpgradeCl
                       <span className="text-gray-300">Viral Potential</span>
                       <span className="text-green-400 font-semibold">High</span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                  <h3 className="text-yellow-400 font-bold text-lg mb-4">Trending Elements</h3>
+                  <div className="space-y-3">
+                    {generatedContent.trendingElements && generatedContent.trendingElements.map((element, index) => (
+                      <div key={index} className="bg-gray-900/50 rounded-lg p-3">
+                        <p className="text-gray-300 text-sm">{element}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
