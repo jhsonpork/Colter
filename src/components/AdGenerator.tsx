@@ -5,12 +5,14 @@ import { generateAd } from '../services/gemini';
 import AdPreview from './AdPreview';
 import ToneSelector from './ToneSelector';
 import { downloadAdPackage } from '../utils/download';
+import { useAuth } from '../context/AuthContext';
 
 interface AdGeneratorProps {
   onAdGenerated: (ad: AdResult) => void;
   onUpgradeClick: () => void;
   hasUsedFreeTrial: boolean;
   generatedAd: AdResult | null;
+  onAuthRequired: () => void;
 }
 
 const AdGenerator: React.FC<AdGeneratorProps> = ({
@@ -18,6 +20,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   onUpgradeClick,
   hasUsedFreeTrial,
   generatedAd,
+  onAuthRequired
 }) => {
   const [businessDescription, setBusinessDescription] = useState('');
   const [businessInfo, setBusinessInfo] = useState('');
@@ -26,6 +29,7 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [inputMode, setInputMode] = useState<'description' | 'info'>('description');
   const [adResult, setAdResult] = useState<AdResult | null>(generatedAd);
+  const { user } = useAuth();
 
   // Update local state when prop changes
   useEffect(() => {
@@ -38,6 +42,12 @@ const AdGenerator: React.FC<AdGeneratorProps> = ({
   const handleGenerate = async () => {
     const input = inputMode === 'description' ? businessDescription : businessInfo;
     if (!input.trim()) return;
+    
+    // Check if user is logged in
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
 
     if (hasUsedFreeTrial) {
       onUpgradeClick();

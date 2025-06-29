@@ -2,14 +2,17 @@ import React from 'react';
 import { Calendar, Zap, Trash2, Download, Copy, Eye } from 'lucide-react';
 import { SavedCampaign } from '../types/ad';
 import { downloadAdPackage, downloadCampaignPackage } from '../utils/download';
+import { useAuth } from '../context/AuthContext';
 
 interface SavedCampaignsProps {
   campaigns: SavedCampaign[];
   onDeleteCampaign: (id: string) => void;
+  onAuthRequired: () => void;
 }
 
-const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCampaign }) => {
+const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCampaign, onAuthRequired }) => {
   const [expandedCampaign, setExpandedCampaign] = React.useState<string | null>(null);
+  const { user } = useAuth();
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -44,6 +47,28 @@ const SavedCampaigns: React.FC<SavedCampaignsProps> = ({ campaigns, onDeleteCamp
     }
     return '';
   };
+
+  // If user is not logged in, show auth prompt
+  if (!user) {
+    return (
+      <section className="px-6 py-12">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">Saved Campaigns</h2>
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-12">
+            <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+            <p className="text-gray-400 text-lg">Sign in to view your saved campaigns</p>
+            <p className="text-gray-500 text-sm mt-2">Create an account or sign in to save and manage your campaigns</p>
+            <button
+              onClick={onAuthRequired}
+              className="mt-6 px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-bold rounded-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 mx-auto"
+            >
+              Sign In / Sign Up
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (campaigns.length === 0) {
     return (

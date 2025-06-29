@@ -10,9 +10,10 @@ import toast from 'react-hot-toast';
 
 interface HeaderProps {
   onUpgradeClick: () => void;
+  onAuthClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onUpgradeClick }) => {
+const Header: React.FC<HeaderProps> = ({ onUpgradeClick, onAuthClick }) => {
   const { user } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -52,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ onUpgradeClick }) => {
             />
           ) : (
             <button
-              onClick={() => setIsAuthModalOpen(true)}
+              onClick={onAuthClick}
               className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold rounded-lg 
                        hover:from-yellow-300 hover:to-amber-400 transition-all duration-300 shadow-lg shadow-yellow-400/25
                        hover:shadow-yellow-400/40 hover:scale-105"
@@ -62,11 +63,6 @@ const Header: React.FC<HeaderProps> = ({ onUpgradeClick }) => {
           )}
         </div>
       </div>
-
-      <AuthModal 
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
 
       <UserProfileModal
         isOpen={isProfileModalOpen}
