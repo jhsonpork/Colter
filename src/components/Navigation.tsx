@@ -178,7 +178,7 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, onPageChange }) => 
         {/* Category Headers */}
         <div className="text-center mb-6">
           <h3 className="text-yellow-400 font-bold text-lg mb-2">🚀 All Features Available</h3>
-          <p className="text-gray-400 text-sm">71 powerful AI tools for viral marketing and business growth</p>
+          <p className="text-gray-400 text-sm">73 powerful AI tools for viral marketing and business growth</p>
         </div>
         
         <div className="flex flex-wrap justify-center gap-2">
